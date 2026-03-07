@@ -249,7 +249,7 @@ BullMQ Worker picks up the job:
 
 ### Entry Point & Server Wiring
 
-**File:** `ResumeBuilder-backend/index.js`
+**File:** `backend/index.js`
 
 The entry point bootstraps three co-existing server subsystems on a single HTTP server:
 
@@ -268,7 +268,7 @@ A `parseRedisUrl()` helper converts the `REDIS_URL` environment variable (redis[
 
 ### DocumentManager
 
-**File:** `ResumeBuilder-backend/crdt/DocumentManager.js`
+**File:** `backend/crdt/DocumentManager.js`
 
 The DocumentManager is a **singleton** that manages the lifecycle of in-memory `Y.Doc` instances.
 
@@ -295,7 +295,7 @@ The DocumentManager is a **singleton** that manages the lifecycle of in-memory `
 
 ### Yjs WebSocket Server
 
-**File:** `ResumeBuilder-backend/crdt/WSServer.js`
+**File:** `backend/crdt/WSServer.js`
 
 A raw WebSocket server (using the `ws` library) that handles the binary Yjs sync protocol.
 
@@ -330,8 +330,8 @@ A raw WebSocket server (using the `ws` library) that handles the binary Yjs sync
 ### Write-Behind Persistence (BullMQ)
 
 **Files:**
-- `ResumeBuilder-backend/crdt/persistenceScheduler.js` — Timer + queue producer
-- `ResumeBuilder-backend/crdt/persistenceWorker.js` — Queue consumer
+- `backend/crdt/persistenceScheduler.js` — Timer + queue producer
+- `backend/crdt/persistenceWorker.js` — Queue consumer
 
 **Scheduler (Producer):**
 ```
@@ -363,7 +363,7 @@ The worker writes **both** the binary Yjs state (for CRDT restoration) and the p
 
 ### Socket.IO (Presence Only)
 
-**File:** `ResumeBuilder-backend/socket/socketHandlers.js`
+**File:** `backend/socket/socketHandlers.js`
 
 After the CRDT migration, Socket.IO no longer carries document data. It handles:
 
@@ -398,7 +398,7 @@ The `loadResumeSocket` controller now returns `yjsEnabled: true` in its response
 
 ### Yjs Setup & Providers
 
-**File:** `resumebuilder-frontend/src/crdt/yjsSetup.js`
+**File:** `frontend/src/crdt/yjsSetup.js`
 
 Creates and returns three interconnected objects:
 
@@ -430,7 +430,7 @@ The `y-indexeddb` provider handles:
 
 ### useYjsDocument Hook
 
-**File:** `resumebuilder-frontend/src/crdt/useYjsDocument.jsx`
+**File:** `frontend/src/crdt/useYjsDocument.jsx`
 
 A React hook that bridges the Yjs world (mutable shared types) into the React world (immutable snapshots).
 
@@ -453,7 +453,7 @@ const { resumeData, globalStyles, selectedTemplate } = useYjsDocument(ydoc, sync
 
 ### CRDT Data Handlers
 
-**File:** `resumebuilder-frontend/src/crdt/yjsResumeDataHandlers.js`
+**File:** `frontend/src/crdt/yjsResumeDataHandlers.js`
 
 This file is the **drop-in replacement** for the old `handlers/resumeDataHandlers.jsx`. It exports handlers with the **exact same function signatures**, so form components require zero changes.
 
@@ -492,7 +492,7 @@ These write directly to `ydoc.getMap('globalStyles')` and `ydoc.getMap('meta')`.
 
 ### Project Component (Orchestrator)
 
-**File:** `resumebuilder-frontend/src/project.jsx`
+**File:** `frontend/src/project.jsx`
 
 The main `ResumeBuilder` component was fully rewritten to use Yjs as the state backbone.
 

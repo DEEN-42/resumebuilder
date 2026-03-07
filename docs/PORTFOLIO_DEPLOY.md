@@ -180,7 +180,7 @@ The frontend polls `GET /deploy/status/:jobId` every 3 seconds. Possible respons
 
 ## Portfolio Template
 
-The portfolio website is a **vanilla HTML/CSS/JS** single-page site. It lives in `ResumeBuilder-backend/portfolio-template/` and has three files:
+The portfolio website is a **vanilla HTML/CSS/JS** single-page site. It lives in `backend/portfolio-template/` and has three files:
 
 | File | Role |
 |---|---|
@@ -207,7 +207,7 @@ This means **no API calls are made from the deployed portfolio** — the data is
 
 ## Frontend: DeployPortfolio Component
 
-Located at `resumebuilder-frontend/src/Components/DeployPortfolio/DeployPortfolio.jsx`.
+Located at `frontend/src/Components/DeployPortfolio/DeployPortfolio.jsx`.
 
 ### User flow
 
@@ -278,11 +278,11 @@ Poll job progress.
 
 | File | Role |
 |---|---|
-| `ResumeBuilder-backend/Controllers/deployController.js` | HTTP handlers: validate request, enqueue job, poll status |
-| `ResumeBuilder-backend/jobs/deployWorker.js` | BullMQ worker: GitHub + Vercel API calls, email notification |
-| `ResumeBuilder-backend/jobs/deployQueue.js` | BullMQ queue factory |
-| `ResumeBuilder-backend/Routes/deployRoute.js` | Express route wiring |
-| `ResumeBuilder-backend/portfolio-template/index.html` | Static portfolio HTML shell |
-| `ResumeBuilder-backend/portfolio-template/styles.css` | Portfolio stylesheet |
-| `ResumeBuilder-backend/portfolio-template/script-template.js` | Runtime data renderer with `__RESUME_DATA__` placeholder |
-| `resumebuilder-frontend/src/Components/DeployPortfolio/DeployPortfolio.jsx` | Deploy UI with job polling |
+| `backend/Controllers/deployController.js` | HTTP handlers: validate request, enqueue job, poll status |
+| `backend/jobs/deployWorker.js` | BullMQ worker: GitHub + Vercel API calls, email notification |
+| `backend/jobs/deployQueue.js` | BullMQ queue factory |
+| `backend/Routes/deployRoute.js` | Express route wiring |
+| `backend/portfolio-template/index.html` | Static portfolio HTML shell |
+| `backend/portfolio-template/styles.css` | Portfolio stylesheet |
+| `backend/portfolio-template/script-template.js` | Runtime data renderer with `__RESUME_DATA__` placeholder |
+| `frontend/src/Components/DeployPortfolio/DeployPortfolio.jsx` | Deploy UI with job polling |

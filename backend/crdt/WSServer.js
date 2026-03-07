@@ -1,9 +1,9 @@
 import { WebSocketServer } from 'ws';
 import * as Y from 'yjs';
-import * as syncProtocol from 'y-protocols/sync';
-import * as awarenessProtocol from 'y-protocols/awareness';
-import * as encoding from 'lib0/encoding';
-import * as decoding from 'lib0/decoding';
+import * as syncProtocol from 'y-protocols/sync.js';
+import * as awarenessProtocol from 'y-protocols/awareness.js';
+import * as encoding from 'lib0/encoding.js';
+import * as decoding from 'lib0/decoding.js';
 import jwt from 'jsonwebtoken';
 import { URL } from 'url';
 import Resume from '../models/resumeDatamodel.js';

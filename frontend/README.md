@@ -4,7 +4,7 @@ Create, edit, share, and download stunning CVs with **real-time preview, multi-u
 
 🚀 **Live Demo:** [resumebuilder-frontend-i6nn.vercel.app](https://resumebuilder-frontend-i6nn.vercel.app/)
 📂 **Frontend Repo:** [DEEN-42/resumebuilder-frontend](https://github.com/DEEN-42/resumebuilder-frontend)
-🗄️ **Backend Repo:** [DEEN-42/ResumeBuilder-backend](https://github.com/DEEN-42/ResumeBuilder-backend)
+🗄️ **Backend Repo:** [DEEN-42/backend](https://github.com/DEEN-42/backend)
 
 ---
 
@@ -48,7 +48,7 @@ Create, edit, share, and download stunning CVs with **real-time preview, multi-u
 
 ```bash
 git clone https://github.com/DEEN-42/resumebuilder-frontend.git
-git clone https://github.com/DEEN-42/ResumeBuilder-backend.git
+git clone https://github.com/DEEN-42/backend.git
 ```
 
 ### 2\. Install Dependencies
@@ -63,7 +63,7 @@ npm install
 #### Backend
 
 ```bash
-cd ResumeBuilder-backend
+cd backend
 npm install
 ```
 
@@ -71,7 +71,7 @@ npm install
 
 Create the following `.env` files.
 
-#### `ResumeBuilder-backend/.env`
+#### `backend/.env`
 
 ```env
 PORT=3030
@@ -114,7 +114,7 @@ GITHUB_USERNAME=your-github-username
 FRONTEND_URL=https://resumebuilder-frontend-i6nn.vercel.app
 ```
 
-#### `resumebuilder-frontend/.env`
+#### `frontend/.env`
 
 ```env
 VITE_GOOGLE_CLIENT_ID=your-google-client-id
@@ -124,7 +124,7 @@ VITE_GOOGLE_CLIENT_ID=your-google-client-id
 
 ```bash
 # In one terminal: Start the backend
-cd ResumeBuilder-backend
+cd backend
 npm run dev
 ```
 

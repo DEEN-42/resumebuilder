@@ -232,12 +232,12 @@ The orchestrator. It:
 
 | File | Role |
 |---|---|
-| `ResumeBuilder-backend/crdt/WSServer.js` | WebSocket server, sync protocol, awareness relay, disconnect broadcast |
-| `ResumeBuilder-backend/crdt/DocumentManager.js` | In-memory Y.Doc lifecycle, dirty tracking, GC |
-| `ResumeBuilder-backend/crdt/persistenceScheduler.js` | 30s timer → drains dirty set → enqueues BullMQ jobs |
-| `ResumeBuilder-backend/crdt/persistenceWorker.js` | BullMQ worker → encodes Y.Doc → writes to MongoDB |
-| `resumebuilder-frontend/src/crdt/yjsSetup.js` | Y.Doc + WebsocketProvider + IndexeddbPersistence factory |
-| `resumebuilder-frontend/src/crdt/useYjsDocument.jsx` | React hook: Y.Doc → plain JS state |
-| `resumebuilder-frontend/src/crdt/yjsResumeDataHandlers.js` | Y.Doc mutation handlers |
-| `resumebuilder-frontend/src/project.jsx` | Main editor page, awareness management, presence toasts |
-| `resumebuilder-frontend/src/Components/RightPanel/SharingSection/SharingSection.jsx` | Share UI, online badges |
+| `backend/crdt/WSServer.js` | WebSocket server, sync protocol, awareness relay, disconnect broadcast |
+| `backend/crdt/DocumentManager.js` | In-memory Y.Doc lifecycle, dirty tracking, GC |
+| `backend/crdt/persistenceScheduler.js` | 30s timer → drains dirty set → enqueues BullMQ jobs |
+| `backend/crdt/persistenceWorker.js` | BullMQ worker → encodes Y.Doc → writes to MongoDB |
+| `frontend/src/crdt/yjsSetup.js` | Y.Doc + WebsocketProvider + IndexeddbPersistence factory |
+| `frontend/src/crdt/useYjsDocument.jsx` | React hook: Y.Doc → plain JS state |
+| `frontend/src/crdt/yjsResumeDataHandlers.js` | Y.Doc mutation handlers |
+| `frontend/src/project.jsx` | Main editor page, awareness management, presence toasts |
+| `frontend/src/Components/RightPanel/SharingSection/SharingSection.jsx` | Share UI, online badges |

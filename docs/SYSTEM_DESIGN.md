@@ -396,7 +396,7 @@ The template preview component receives `resumeData`, `globalStyles`, and `secti
 ```
                     ┌──────────────────────────────────┐
                     │          Vercel (Frontend)         │
-                    │   resumebuilder-frontend (React)   │
+                    │        frontend (React)            │
                     └─────────────────┬────────────────┘
                                       │ HTTPS / WSS
                     ┌─────────────────▼────────────────┐
