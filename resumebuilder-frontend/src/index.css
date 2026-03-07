@@ -1,0 +1,520 @@
+﻿/* ═══════════════════════════════════════════════════════════════════
+   THEME VARIABLES  — applied on <html data-theme="...">
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── DARK (default) — Tailwind Slate palette ──────────────────────── */
+:root,
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  /* Slate-inspired Deep Dark Palette */
+  --bg-0:       #0a0f1e;  /* Deep navy canvas — richer than pure black */
+  --bg-1:       #0f1829;  /* Panel base — slightly lifted */
+  --bg-2:       #162033;  /* Hover / card surfaces */
+  --bg-3:       #1e2d42;  /* Active / selected states */
+  --bg-4:       #2a3c52;  /* Raised elements */
+
+  /* Borders & Dividers */
+  --bdr:        rgba(148, 163, 184, 0.08);   /* slate-400 @8% */
+  --bdr-strong: rgba(148, 163, 184, 0.15);   /* slate-400 @15% */
+
+  /* Typography */
+  --tx-1:       #f1f5f9; /* slate-100 — crisp primary text */
+  --tx-2:       #94a3b8; /* slate-400 — comfortable secondary */
+  --tx-3:       #475569; /* slate-600 — muted / tertiary */
+  --tx-4:       #334155; /* slate-700 — ghost text */
+
+  /* Accents — violet-indigo */
+  --accent:     #818cf8; /* indigo-400 — slightly brighter for dark bg */
+  --accent-2:   #6366f1; /* indigo-500 */
+  --accent-bg:  rgba(129, 140, 248, 0.12);
+
+  /* Inputs */
+  --inp-bg:     rgba(148, 163, 184, 0.05);
+  --inp-bdr:    rgba(148, 163, 184, 0.12);
+  --inp-txt:    #f1f5f9;
+  --inp-ph:     #475569;
+  --inp-focus:  #818cf8;
+  --inp-glow:   rgba(129, 140, 248, 0.2);
+
+  /* Header / Glassmorphism */
+  --hdr-bg:       rgba(10, 15, 30, 0.82);
+  --hdr-border:   rgba(148, 163, 184, 0.1);
+  --hdr-blur:     16px;
+  --hdr-shadow:   0 1px 0 rgba(148,163,184,0.06), 0 4px 16px rgba(0,0,0,0.3);
+
+  /* Canvas — subtly different from panel bg */
+  --canvas-bg:    #070d1a;
+  --dot-color:    rgba(148, 163, 184, 0.07);
+
+  /* Panel elevation shadows */
+  --panel-shadow: 2px 0 16px rgba(0, 0, 0, 0.35);
+
+  /* Shadows */
+  --shadow-sm:    0 1px 3px rgba(0,0,0,0.4);
+  --shadow-md:    0 4px 16px rgba(0,0,0,0.5);
+  --shadow-lg:    0 12px 32px rgba(0,0,0,0.6);
+
+  /* Left Panel */
+  --lp-bg:            var(--bg-1);
+  --lp-border:        var(--bdr);
+  --lp-nav-bg:        var(--bg-2);
+  --lp-nav-border:    var(--bdr);
+  --lp-nav-txt:       var(--tx-2);
+  --lp-nav-hover:     var(--bg-3);
+  --lp-nav-active:    var(--accent);
+  --lp-nav-active-tx: #ffffff;
+  --lp-drop-bg:       var(--bg-2);
+  --lp-drop-border:   var(--bdr);
+  --lp-form-bg:       var(--bg-1);
+
+  /* Right Panel */
+  --rp-bg:            var(--bg-1);
+  --rp-surface:       var(--bg-2);
+  --rp-raised:        var(--bg-3);
+  --rp-border:        var(--bdr);
+  --rp-txt:           var(--tx-1);
+  --rp-sub:           var(--tx-2);
+  --rp-muted:         var(--tx-3);
+  --rp-inp:           var(--inp-bg);
+  --rp-scroll:        rgba(148,163,184,0.12);
+
+  /* Semantic */
+  --success:  #34d399;
+  --error:    #f87171;
+  --warn:     #fbbf24;
+  --info:     #60a5fa;
+
+  /* Scrollbar */
+  --scroll-thumb: rgba(148,163,184,0.15);
+  --scroll-track: transparent;
+}
+
+/* ── LIGHT ────────────────────────────────────────────────────────── */
+[data-theme="light"] {
+  color-scheme: light;
+
+  /* Premium Light Palette */
+  --bg-0:       #fafafa; /* Canvas background (gray-50) */
+  --bg-1:       #ffffff; /* Panel backgrounds */
+  --bg-2:       #f4f4f5; /* Hover areas (gray-100) */
+  --bg-3:       #e4e4e7; /* Active/Select areas (gray-200) */
+  --bg-4:       #d4d4d8;
+
+  /* Borders & Dividers */
+  --bdr:        #e4e4e7; /* gray-200 */
+  --bdr-strong: #d4d4d8; /* gray-300 */
+
+  /* Typography */
+  --tx-1:       #09090b; /* gray-950 */
+  --tx-2:       #71717a; /* gray-500 */
+  --tx-3:       #a1a1aa; /* gray-400 */
+  --tx-4:       #d4d4d8;
+
+  /* Accents */
+  --accent:     #4f46e5;
+  --accent-2:   #4338ca;
+  --accent-bg:  rgba(79, 70, 229, 0.08);
+
+  /* Inputs */
+  --inp-bg:     #f4f4f5;
+  --inp-bdr:    #e4e4e7;
+  --inp-txt:    #09090b;
+  --inp-ph:     #a1a1aa;
+  --inp-focus:  #4f46e5;
+  --inp-glow:   rgba(79, 70, 229, 0.15);
+
+  /* Header / Glassmorphism */
+  --hdr-bg:       rgba(255, 255, 255, 0.8);
+  --hdr-border:   #e4e4e7;
+  --hdr-blur:     12px;
+  --hdr-shadow:   0 1px 2px rgba(0,0,0,0.03);
+
+  /* Canvas */
+  --canvas-bg:    #fafafa;
+  --dot-color:    #e4e4e7;
+
+  /* Shadows */
+  --shadow-sm:    0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md:    0 4px 12px rgba(0,0,0,0.1);
+  --shadow-lg:    0 10px 15px -3px rgba(0, 0, 0, 0.05);
+
+  /* Left Panel */
+  --lp-bg:            var(--bg-1);
+  --lp-border:        var(--bdr);
+  --lp-nav-bg:        var(--bg-2);
+  --lp-nav-border:    var(--bdr);
+  --lp-nav-txt:       var(--tx-2);
+  --lp-nav-hover:     var(--bg-3);
+  --lp-nav-active:    var(--accent);
+  --lp-nav-active-tx: #ffffff;
+  --lp-drop-bg:       var(--bg-2);
+  --lp-drop-border:   var(--bdr);
+  --lp-form-bg:       var(--bg-1);
+
+  /* Right Panel */
+  --rp-bg:            var(--bg-1);
+  --rp-surface:       var(--bg-2);
+  --rp-raised:        var(--bg-3);
+  --rp-border:        var(--bdr);
+  --rp-txt:           var(--tx-1);
+  --rp-sub:           var(--tx-2);
+  --rp-muted:         var(--tx-3);
+  --rp-inp:           var(--inp-bg);
+  --rp-scroll:        rgba(0,0,0,0.1);
+
+  /* Semantic */
+  --success:  #059669;
+  --error:    #dc2626;
+  --warn:     #d97706;
+  --info:     #2563eb;
+
+  /* Scrollbar */
+  --scroll-thumb: rgba(0,0,0,0.15);
+  --scroll-track: transparent;
+}
+
+/* Global Reset & Base Styles */
+body {
+  background-color: var(--bg-0);
+  color: var(--tx-1);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Scrollbar Polish */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--bg-3);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--bg-4);
+}
+
+/* ── GLOBAL FORM ELEMENTS ────────────────────────────────────────── */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="url"],
+input[type="date"],
+textarea,
+select {
+  display: block;
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--inp-txt);
+  background-color: var(--inp-bg);
+  background-clip: padding-box;
+  border: 1px solid var(--inp-bdr);
+  border-radius: 8px;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  appearance: none;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--inp-ph);
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--inp-focus);
+  outline: 0;
+  box-shadow: 0 0 0 3px var(--inp-glow);
+}
+
+label {
+  display: inline-block;
+  margin-bottom: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--tx-2);
+}
+
+/* Button & Action Reset */
+button {
+  font-family: inherit;
+}
+
+/* ── GLOBAL RESET ─────────────────────────────────────────────────── */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════
+   FORM COMPONENT DARK-MODE OVERRIDES
+   These selectors target hardcoded colors in the individual form CSS
+   files without modifying each one, since vars aren't applied there.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── General containers / cards ──────────────────────────────────── */
+[data-theme="dark"] .education-form,
+[data-theme="dark"] .projects-form,
+[data-theme="dark"] .internships-form,
+[data-theme="dark"] .skills-form,
+[data-theme="dark"] .awards-form,
+[data-theme="dark"] .extra-academic-form,
+[data-theme="dark"] .coursework-form,
+[data-theme="dark"] .positions-form,
+[data-theme="dark"] .personal-info-form,
+[data-theme="dark"] .profile-picture-section,
+[data-theme="dark"] .institute-logo-section,
+[data-theme="dark"] .logo-upload-area,
+[data-theme="dark"] .picture-upload-area {
+  background-color: var(--bg-2) !important;
+  color: var(--tx-1) !important;
+}
+
+/* ── Item cards ─────────────────────────────────────────────────── */
+[data-theme="dark"] .education-item,
+[data-theme="dark"] .project-item,
+[data-theme="dark"] .internship-item,
+[data-theme="dark"] .award-item,
+[data-theme="dark"] .coursework-item,
+[data-theme="dark"] .position-item,
+[data-theme="dark"] .extra-item,
+[data-theme="dark"] .skill-category {
+  background-color: var(--bg-3) !important;
+  border-color: var(--bdr) !important;
+  color: var(--tx-1) !important;
+}
+
+/* ── Borders & dashed upload areas ──────────────────────────────── */
+[data-theme="dark"] .profile-picture-section,
+[data-theme="dark"] .institute-logo-section {
+  border-color: var(--bdr-strong) !important;
+}
+
+/* ── All text inputs / textareas / selects inside forms ─────────── */
+[data-theme="dark"] .education-input,
+[data-theme="dark"] .project-input,
+[data-theme="dark"] .internship-input,
+[data-theme="dark"] .skill-input,
+[data-theme="dark"] .award-input,
+[data-theme="dark"] .coursework-input,
+[data-theme="dark"] .position-input,
+[data-theme="dark"] .extra-input,
+[data-theme="dark"] input[type="text"],
+[data-theme="dark"] input[type="email"],
+[data-theme="dark"] input[type="url"],
+[data-theme="dark"] input[type="number"],
+[data-theme="dark"] input[type="date"],
+[data-theme="dark"] input[type="tel"],
+[data-theme="dark"] textarea,
+[data-theme="dark"] select {
+  background-color: var(--inp-bg) !important;
+  border-color: var(--inp-bdr) !important;
+  color: var(--inp-txt) !important;
+}
+
+[data-theme="dark"] input[type="text"]::placeholder,
+[data-theme="dark"] input[type="email"]::placeholder,
+[data-theme="dark"] input[type="url"]::placeholder,
+[data-theme="dark"] input[type="number"]::placeholder,
+[data-theme="dark"] textarea::placeholder {
+  color: var(--inp-ph) !important;
+}
+
+[data-theme="dark"] input[type="text"]:focus,
+[data-theme="dark"] input[type="email"]:focus,
+[data-theme="dark"] input[type="url"]:focus,
+[data-theme="dark"] input[type="number"]:focus,
+[data-theme="dark"] input[type="date"]:focus,
+[data-theme="dark"] textarea:focus,
+[data-theme="dark"] select:focus {
+  border-color: var(--inp-focus) !important;
+  box-shadow: 0 0 0 3px var(--inp-glow) !important;
+}
+
+[data-theme="dark"] select option {
+  background-color: var(--bg-2);
+  color: var(--tx-1);
+}
+
+/* ── Labels and titles ──────────────────────────────────────────── */
+[data-theme="dark"] .form-title,
+[data-theme="dark"] label,
+[data-theme="dark"] h3,
+[data-theme="dark"] h4 {
+  color: var(--tx-1) !important;
+}
+
+/* ── Add buttons ────────────────────────────────────────────────── */
+[data-theme="dark"] .add-button {
+  border-color: var(--bdr-strong) !important;
+  color: var(--tx-3) !important;
+  background: var(--bg-3) !important;
+}
+
+[data-theme="dark"] .add-button:hover {
+  border-color: #3b82f6 !important;
+  color: #60a5fa !important;
+  background: rgba(59,130,246,0.08) !important;
+}
+
+/* ── Change picture / logo buttons ──────────────────────────────── */
+[data-theme="dark"] .change-picture-btn,
+[data-theme="dark"] .change-logo-btn {
+  background: var(--bg-3) !important;
+  border-color: var(--bdr) !important;
+  color: var(--tx-2) !important;
+}
+
+[data-theme="dark"] .change-picture-btn:hover,
+[data-theme="dark"] .change-logo-btn:hover {
+  border-color: #3b82f6 !important;
+  color: #60a5fa !important;
+}
+
+/* ── Upload placeholders ────────────────────────────────────────── */
+[data-theme="dark"] .upload-placeholder { color: var(--tx-3) !important; }
+[data-theme="dark"] .upload-placeholder:hover { color: #60a5fa !important; }
+
+/* ── Resume Customizer / ResumeLayout ───────────────────────────── */
+[data-theme="dark"] .resume-layout,
+[data-theme="dark"] .resume-customizer,
+[data-theme="dark"] .section-item,
+[data-theme="dark"] .customizer-container {
+  background-color: var(--bg-2) !important;
+  color: var(--tx-1) !important;
+  border-color: var(--bdr) !important;
+}
+
+/* ── DeployPortfolio ────────────────────────────────────────────── */
+[data-theme="dark"] .deploy-portfolio,
+[data-theme="dark"] .deploy-section,
+[data-theme="dark"] .deploy-card {
+  background-color: var(--bg-2) !important;
+  color: var(--tx-1) !important;
+  border-color: var(--bdr) !important;
+}
+
+/* ── PersonalInfo Style Settings panel ──────────────────────────── */
+[data-theme="dark"] .style-settings {
+  background-color: var(--bg-2) !important;
+  border-color: var(--bdr) !important;
+}
+
+[data-theme="dark"] .settings-title {
+  color: var(--tx-2) !important;
+}
+
+[data-theme="dark"] .style-group {
+  background: var(--bg-3) !important;
+  border-color: var(--bdr) !important;
+}
+
+[data-theme="dark"] .style-group-title {
+  color: var(--tx-1) !important;
+}
+
+[data-theme="dark"] .font-size-control,
+[data-theme="dark"] .font-size-label,
+[data-theme="dark"] .color-control,
+[data-theme="dark"] .color-label {
+  color: var(--tx-3) !important;
+}
+
+[data-theme="dark"] .font-size-input,
+[data-theme="dark"] .font-family-select {
+  background-color: var(--bg-2) !important;
+  border-color: var(--inp-bdr) !important;
+  color: var(--tx-1) !important;
+}
+
+[data-theme="dark"] .style-button {
+  background: var(--bg-2) !important;
+  border-color: var(--bdr-strong) !important;
+  color: var(--tx-1) !important;
+}
+
+[data-theme="dark"] .style-button:hover {
+  border-color: #3b82f6 !important;
+  color: #60a5fa !important;
+  background-color: rgba(59,130,246,0.1) !important;
+}
+
+[data-theme="dark"] .style-button.active {
+  background: #3b82f6 !important;
+  color: #fff !important;
+  border-color: #2563eb !important;
+}
+
+/* ── Education / all form item dark fix ─────────────────────────── */
+[data-theme="dark"] .education-form,
+[data-theme="dark"] .education-item {
+  background-color: var(--bg-2) !important;
+  border-color: var(--bdr) !important;
+  color: var(--tx-1) !important;
+}
+
+[data-theme="dark"] .education-input {
+  background-color: var(--inp-bg) !important;
+  border-color: var(--inp-bdr) !important;
+  color: var(--inp-txt) !important;
+}
+
+/* PersonalInfoForm style-controls section */
+[data-theme="dark"] .style-settings-panel,
+[data-theme="dark"] .style-group,
+[data-theme="dark"] .style-controls,
+[data-theme="dark"] .font-size-control,
+[data-theme="dark"] .font-family-control,
+[data-theme="dark"] .color-control {
+  background: transparent !important;
+  color: var(--tx-1) !important;
+}
+
+[data-theme="dark"] .style-group-title,
+[data-theme="dark"] .font-size-label,
+[data-theme="dark"] .color-label { color: var(--tx-2) !important; }
+
+[data-theme="dark"] .font-size-input,
+[data-theme="dark"] .font-family-select {
+  background: var(--inp-bg) !important;
+  border-color: var(--inp-bdr) !important;
+  color: var(--inp-txt) !important;
+}
+
+[data-theme="dark"] .style-button {
+  background: var(--bg-3) !important;
+  border-color: var(--bdr) !important;
+  color: var(--tx-2) !important;
+}
+[data-theme="dark"] .style-button.active {
+  background: rgba(59,130,246,0.18) !important;
+  border-color: #3b82f6 !important;
+  color: #60a5fa !important;
+}
+
+/* Change Logo button (green variant in light) */
+[data-theme="dark"] .change-logo-btn,
+[data-theme="dark"] button.change-logo-btn {
+  background: var(--bg-3) !important;
+  border-color: var(--bdr) !important;
+  color: var(--tx-2) !important;
+}
+[data-theme="dark"] .change-logo-btn:hover { color: #34d399 !important; border-color: #34d399 !important; }

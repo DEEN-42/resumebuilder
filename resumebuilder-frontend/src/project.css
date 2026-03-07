@@ -1,0 +1,809 @@
+﻿/* ═══════════════════════════════════════════════════════════════════
+   WORKSPACE LAYOUT & COMPONENT STYLES
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── MAIN CONTAINER ───────────────────────────────────────────────── */
+.resume-builder-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100%;          /* 100vw causes scrollbar-width overflow; 100% is correct */
+  background-color: var(--bg-0);
+  color: var(--tx-1);
+  overflow: hidden;
+  position: fixed;      /* pin to viewport — prevents any ancestor scroll bleed */
+  top: 0;
+  left: 0;
+}
+
+/* ── WORKSPACE GRID ───────────────────────────────────────────────── */
+.workspace-container {
+  display: flex;
+  flex: 1;
+  width: 100%;
+  min-width: 0;           /* prevent flex child overflow */
+  height: calc(100vh - 56px);
+  overflow: hidden;
+  position: relative;
+}
+
+/* ── SIDE PANELS (Common) ─────────────────────────────────────────── */
+.workspace-panel {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-1);
+  border-right: 1px solid var(--bdr);
+  border-left: 1px solid var(--bdr);
+  transition: width 0.3s cubic-bezier(0.25, 0.8, 0.25, 1),
+              opacity 0.2s ease,
+              transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  position: relative;
+  z-index: 10;
+  height: 100%;
+  flex-shrink: 0; /* panels must never shrink */
+}
+
+.workspace-panel.left-panel {
+  border-left: none;
+  box-shadow: 2px 0 20px rgba(0, 0, 0, 0.4);
+}
+.workspace-panel.right-panel {
+  border-right: none;
+  border-left: 1px solid var(--bdr);
+  box-shadow: -2px 0 20px rgba(0, 0, 0, 0.4);
+}
+
+/* Panel States — 300px keeps canvas spacious at 1366px laptops */
+.workspace-panel.open {
+  width: 300px;
+  opacity: 1;
+}
+
+.workspace-panel.closed {
+  width: 0;
+  opacity: 0;
+  overflow: hidden;
+  border: none;
+  padding: 0;
+  box-shadow: none;
+}
+
+/* Panel Header */
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 48px;
+  padding: 0 16px;
+  border-bottom: 1px solid var(--bdr);
+  background: linear-gradient(180deg, var(--bg-2) 0%, var(--bg-1) 100%);
+  flex-shrink: 0;
+}
+
+.panel-title {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--tx-2);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.panel-toggle-btn {
+  background: rgba(148, 163, 184, 0.06);
+  border: 1px solid rgba(148, 163, 184, 0.1);
+  color: var(--tx-3);
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+.panel-toggle-btn svg {
+  width: 16px;
+  height: 16px;
+  stroke: currentColor;
+  fill: none;
+}
+
+.panel-toggle-btn:hover {
+  background: rgba(148, 163, 184, 0.12);
+  color: var(--accent);
+  border-color: rgba(129, 140, 248, 0.3);
+  box-shadow: 0 0 10px rgba(129, 140, 248, 0.12);
+}
+
+[data-theme="light"] .panel-toggle-btn {
+  background: var(--bg-2);
+  border-color: var(--bdr);
+}
+[data-theme="light"] .panel-toggle-btn:hover {
+  background: var(--bg-3);
+}
+
+/* Panel Content Scroll Area */
+.panel-content-scroll {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* ── LEFT PANEL SPECIFICS (Editor) ────────────────────────────────── */
+.editor-nav-tabs {
+  display: flex;
+  padding: 6px 8px;
+  gap: 3px;
+  background: var(--bg-2);
+  border-bottom: 1px solid var(--bdr);
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+
+.editor-tab {
+  flex: 1;
+  padding: 7px 10px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  border: none;
+  background: transparent;
+  color: var(--tx-3);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  letter-spacing: 0.01em;
+}
+
+.editor-tab:hover {
+  background: rgba(148, 163, 184, 0.08);
+  color: var(--tx-2);
+}
+
+.editor-tab.active {
+  background: rgba(129, 140, 248, 0.15);
+  color: var(--accent);
+  box-shadow: inset 0 0 0 1px rgba(129, 140, 248, 0.2);
+}
+
+[data-theme="light"] .editor-tab:hover {
+  background: var(--bg-2);
+}
+[data-theme="light"] .editor-tab.active {
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+
+.editor-content-area {
+  padding: 16px;
+}
+
+.section-selector-wrapper {
+  margin-bottom: 16px;
+}
+
+.section-dropdown {
+  width: 100%;
+  padding: 10px 12px;
+  background: var(--inp-bg);
+  border: 1px solid var(--inp-bdr);
+  border-radius: 8px;
+  color: var(--tx-1);
+  font-size: 0.9rem;
+  outline: none;
+  cursor: pointer;
+  appearance: none; /* Custom arrow ideally */
+  background-image: linear-gradient(45deg, transparent 50%, var(--tx-3) 50%),
+                    linear-gradient(135deg, var(--tx-3) 50%, transparent 50%);
+  background-position: calc(100% - 20px) calc(1em + 2px),
+                       calc(100% - 15px) calc(1em + 2px);
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+}
+
+.section-dropdown:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--inp-glow);
+}
+
+/* ── CANVAS AREA ──────────────────────────────────────────────────── */
+.workspace-canvas {
+  flex: 1;
+  min-width: 0;            /* critical: stops flex child overflow */
+  background-color: var(--canvas-bg);
+  background-image:
+    radial-gradient(circle, var(--dot-color) 1px, transparent 1px);
+  background-size: 24px 24px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 1;
+}
+
+/* ── FLOATING ZOOM TOOLBAR (Glassmorphism) ────────────────────────── */
+.canvas-toolbar {
+  position: absolute;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(14, 20, 38, 0.82);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(20px) saturate(180%);
+  padding: 5px 10px;
+  border-radius: 28px;
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(148, 163, 184, 0.06) inset;
+  z-index: 50;
+  white-space: nowrap;
+}
+
+[data-theme="light"] .canvas-toolbar {
+  background: rgba(255, 255, 255, 0.88);
+  border-color: rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(255,255,255,0.7) inset;
+}
+
+.zoom-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.zoom-controls button {
+  background: transparent;
+  border: none;
+  color: rgba(148, 163, 184, 0.7);
+  padding: 6px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+.zoom-controls button svg {
+  width: 15px;
+  height: 15px;
+  stroke: currentColor;
+  fill: none;
+}
+.zoom-controls button:hover {
+  background: rgba(129, 140, 248, 0.15);
+  color: #c7d2fe;
+}
+[data-theme="light"] .zoom-controls button {
+  color: var(--tx-2);
+}
+[data-theme="light"] .zoom-controls button:hover {
+  background: rgba(0,0,0,0.06);
+  color: var(--tx-1);
+}
+
+.zoom-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: rgba(241, 245, 249, 0.9);
+  min-width: 38px;
+  text-align: center;
+  -webkit-user-select: none;
+  user-select: none;
+  letter-spacing: 0.02em;
+}
+[data-theme="light"] .zoom-label {
+  color: var(--tx-1);
+}
+
+/* ── CANVAS SCROLL & PAPER ────────────────────────────────────────── */
+.canvas-scroll-area {
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  padding: 40px 32px 96px;  /* generous but not wasteful */
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.resume-preview-wrapper {
+  background: #ffffff;
+  border-radius: 3px;
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.15),
+    0 8px 24px rgba(0, 0, 0, 0.25),
+    0 24px 64px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(0,0,0,0.08);
+  transition: transform 0.2s ease-out, box-shadow 0.2s ease;
+  transform-origin: top center;
+  max-width: 210mm;
+  will-change: transform;
+}
+
+.resume-preview-wrapper:hover {
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.15),
+    0 12px 32px rgba(0, 0, 0, 0.35),
+    0 32px 80px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(0,0,0,0.1);
+}
+
+/* ── COLLAPSED INDICATORS ─────────────────────────────────────────── */
+.panel-collapsed-indicator {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--bg-2);
+  border: 1px solid rgba(148, 163, 184, 0.12);
+  color: var(--tx-3);
+  padding: 16px 7px;
+  cursor: pointer;
+  z-index: 20;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.panel-collapsed-indicator svg {
+  width: 16px;
+  height: 16px;
+  stroke: currentColor;
+  fill: none;
+}
+
+.panel-collapsed-indicator:hover {
+  background: var(--bg-3);
+  color: var(--accent);
+  border-color: rgba(129, 140, 248, 0.4);
+  box-shadow: 0 0 16px rgba(129, 140, 248, 0.18);
+}
+
+.panel-collapsed-indicator.left {
+  left: 0;
+  border-radius: 0 10px 10px 0;
+  border-left: none;
+}
+
+.panel-collapsed-indicator.right {
+  right: 0;
+  border-radius: 10px 0 0 10px;
+  border-right: none;
+}
+
+[data-theme="light"] .panel-collapsed-indicator {
+  background: var(--bg-1);
+  border-color: var(--bdr);
+  color: var(--tx-3);
+}
+
+/* ── RESPONSIVE BREAKPOINTS ──────────────────────────────────────── */
+
+/* Narrow laptops — slightly tighter panels */
+@media (max-width: 1200px) {
+  .workspace-panel.open {
+    width: 280px;
+  }
+}
+
+/* Tablets / small laptops — compact panels */
+@media (max-width: 1024px) {
+  .workspace-panel.open {
+    width: 260px;
+  }
+  .canvas-scroll-area {
+    padding: 32px 20px 96px;
+  }
+}
+
+/* Tablets — right panel becomes push-over overlay */
+@media (max-width: 900px) {
+  .workspace-panel.right-panel {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 40;
+    box-shadow: -8px 0 40px rgba(0, 0, 0, 0.6);
+  }
+  .workspace-panel.right-panel.closed {
+    transform: translateX(100%);
+    opacity: 0;
+    pointer-events: none;
+    width: 280px; /* keep DOM width so open is instant */
+  }
+  .workspace-panel.right-panel.open {
+    width: 280px;
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Mobile — full-screen overlay panels */
+@media (max-width: 768px) {
+  .workspace-container {
+    position: relative;
+  }
+
+  /* Both panels become full-width drawers */
+  .workspace-panel {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    height: 100%;
+    z-index: 100;
+    border: none;
+    box-shadow: none;
+    transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+                opacity 0.2s ease;
+  }
+
+  .workspace-panel.left-panel {
+    left: 0;
+    width: min(320px, 90vw) !important;
+    transform: translateX(-100%);
+    opacity: 0;
+    pointer-events: none;
+    box-shadow: 8px 0 40px rgba(0, 0, 0, 0.6);
+  }
+  .workspace-panel.left-panel.open {
+    transform: translateX(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .workspace-panel.right-panel {
+    right: 0;
+    left: auto;
+    width: min(320px, 90vw) !important;
+    transform: translateX(100%);
+    opacity: 0;
+    pointer-events: none;
+    box-shadow: -8px 0 40px rgba(0, 0, 0, 0.6);
+  }
+  .workspace-panel.right-panel.open {
+    transform: translateX(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* Closed override */
+  .workspace-panel.closed {
+    pointer-events: none;
+  }
+
+  /* Canvas fills the full workspace on mobile */
+  .workspace-canvas {
+    width: 100%;
+    left: 0;
+  }
+
+  .canvas-scroll-area {
+    padding: 16px 0 96px;
+    /* On mobile, no side padding — let horizontal scroll handle it */
+  }
+
+  /* Backdrop overlay when a panel is open */
+  .workspace-container::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0);
+    z-index: 90;
+    pointer-events: none;
+    transition: background 0.3s ease;
+  }
+
+  /* Toolbar small adjustment */
+  .canvas-toolbar {
+    bottom: 14px;
+    padding: 5px 9px;
+  }
+
+  /* Hide side-expand indicators on mobile (panels are drawers) */
+  .panel-collapsed-indicator {
+    display: none;
+  }
+}
+
+/* ── RESIZE HANDLES ───────────────────────────────────────────────── */
+.resize-handle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 6px;
+  cursor: col-resize;
+  z-index: 30;
+  background: transparent;
+  transition: background 0.15s ease;
+}
+
+.resize-handle::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 2px;
+  height: 40px;
+  border-radius: 2px;
+  background: transparent;
+  transition: background 0.15s ease, height 0.15s ease;
+  left: 2px;
+}
+
+.resize-handle:hover,
+.resize-handle:active {
+  background: rgba(129, 140, 248, 0.08);
+}
+
+.resize-handle:hover::after,
+.resize-handle:active::after {
+  background: rgba(129, 140, 248, 0.6);
+  height: 60px;
+}
+
+/* Right edge of left panel */
+.resize-handle-right {
+  right: -3px;
+}
+
+/* Left edge of right panel */
+.resize-handle-left {
+  left: -3px;
+}
+
+[data-theme="light"] .resize-handle:hover,
+[data-theme="light"] .resize-handle:active {
+  background: rgba(79, 70, 229, 0.06);
+}
+[data-theme="light"] .resize-handle:hover::after,
+[data-theme="light"] .resize-handle:active::after {
+  background: rgba(79, 70, 229, 0.4);
+}
+
+/* ── GLOBAL SCROLLBARS ────────────────────────────────────────────── */
+
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--scroll-thumb);
+  border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.25);
+}
+
+
+.preview-container .page-break-container { box-shadow: 0 4px 16px rgba(0,0,0,0.18); }
+.preview-panel .page-break-container { visibility: visible !important; position: relative !important; left: 0 !important; top: 0 !important; }
+
+.iitkgp-resume { box-sizing: border-box; width: 100%; height: auto; background-color: #ffffff; }
+
+/* ── Form sections ──────────────────────────────────────────────────── */
+.form-section {
+    background: var(--bg-2);
+    padding: 1.25rem;
+    border-bottom: 1px solid var(--bdr);
+    transition: background 0.2s, border-color 0.2s;
+    box-sizing: border-box; overflow: hidden;
+}
+
+.form-section:hover { background: var(--bg-3); }
+
+.form-section h3 {
+    font-weight: 600; margin-bottom: 1rem;
+    color: var(--tx-1); font-size: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--bdr);
+}
+
+/* ── Generic inputs ──────────────────────────────────────────────────── */
+.input-field {
+    width: 100%; padding: 0.7rem 0.85rem;
+    border: 1px solid var(--inp-bdr);
+    border-radius: 7px; font-size: 0.875rem;
+    margin-bottom: 0.75rem;
+    background: var(--inp-bg); color: var(--inp-txt);
+    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+    font-weight: 400; box-sizing: border-box; max-width: 100%;
+}
+
+.input-field:focus {
+    outline: none;
+    border-color: var(--inp-focus);
+    box-shadow: 0 0 0 3px var(--inp-glow);
+}
+
+.input-field::placeholder { color: var(--inp-ph); }
+
+.textarea-field {
+    width: 100%; padding: 0.7rem 0.85rem;
+    border: 1px solid var(--inp-bdr);
+    border-radius: 7px; font-size: 0.875rem;
+    resize: vertical; min-height: 80px;
+    background: var(--inp-bg); color: var(--inp-txt);
+    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+    font-weight: 400; font-family: inherit;
+    box-sizing: border-box; max-width: 100%;
+}
+
+.textarea-field:focus {
+    outline: none;
+    border-color: var(--inp-focus);
+    box-shadow: 0 0 0 3px var(--inp-glow);
+}
+
+.textarea-field::placeholder { color: var(--inp-ph); }
+
+/* ── Grid helpers ────────────────────────────────────────────────────── */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; box-sizing: border-box; }
+.grid-2 > * { min-width: 0; box-sizing: border-box; }
+
+/* ── Add / Remove buttons ────────────────────────────────────────────── */
+.add-button {
+    width: 100%; padding: 0.7rem;
+    border: 1px dashed var(--bdr-strong);
+    border-radius: 7px; color: var(--tx-3);
+    background: var(--bg-2); cursor: pointer;
+    transition: border-color 0.2s, color 0.2s, background 0.2s;
+    font-size: 0.875rem; font-weight: 500;
+    margin-top: 0.5rem; box-sizing: border-box;
+}
+
+.add-button:hover {
+    border-color: #3b82f6; color: #3b82f6;
+    background: rgba(59,130,246,0.06);
+}
+
+.remove-button {
+    color: var(--error); font-size: 0.78rem;
+    background: none; border: none; cursor: pointer;
+    padding: 0.25rem 0; font-weight: 500;
+    transition: color 0.2s;
+}
+
+.remove-button:hover { opacity: 0.75; }
+
+/* ── Style settings ─────────────────────────────────────────────────── */
+.style-settings {
+    margin-top: 1.5rem; padding-top: 1.5rem;
+    border-top: 1px solid var(--bdr); box-sizing: border-box;
+}
+
+.style-settings h4 {
+    font-weight: 600; margin-bottom: 0.75rem;
+    font-size: 0.875rem; color: var(--tx-2);
+}
+
+.style-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 0.75rem; box-sizing: border-box; }
+.style-grid > * { min-width: 0; box-sizing: border-box; }
+.style-grid label { display: block; font-size: 0.72rem; margin-bottom: 0.25rem; color: var(--tx-3); font-weight: 500; }
+
+.style-grid input[type="number"],
+.style-grid select {
+    width: 100%; padding: 0.45rem 0.5rem; font-size: 0.75rem;
+    border: 1px solid var(--inp-bdr); border-radius: 5px;
+    background: var(--inp-bg); color: var(--inp-txt);
+    transition: border-color 0.2s, background 0.2s;
+    box-sizing: border-box;
+}
+
+.style-grid input[type="number"]:focus,
+.style-grid select:focus {
+    outline: none; border-color: var(--inp-focus);
+    box-shadow: 0 0 0 2px var(--inp-glow);
+}
+
+.style-grid input[type="color"] {
+    width: 100%; height: 2rem;
+    border: 1px solid var(--inp-bdr); border-radius: 5px;
+    padding: 0; cursor: pointer; box-sizing: border-box;
+}
+
+.style-grid input[type="color"]:hover { border-color: var(--inp-focus); }
+
+/* ── Native form controls ────────────────────────────────────────────── */
+input[type="checkbox"],
+input[type="radio"] { margin-right: 0.5rem; accent-color: #3b82f6; }
+
+label { color: var(--tx-2); font-weight: 500; font-size: 0.875rem; }
+
+input[type="file"] {
+    width: 100%; padding: 2rem 1rem;
+    border: 2px dashed var(--bdr-strong); border-radius: 8px;
+    font-size: 0.875rem; background: var(--bg-3);
+    color: var(--tx-3); cursor: pointer;
+    transition: border-color 0.2s, background 0.2s; text-align: center;
+    box-sizing: border-box;
+}
+
+input[type="file"]:hover {
+    border-color: #3b82f6; color: #3b82f6;
+    background: rgba(59,130,246,0.06);
+}
+
+/* ── Scrollbars ─────────────────────────────────────────────────────── */
+.form-panel::-webkit-scrollbar,
+.preview-panel::-webkit-scrollbar,
+.sharing-panel::-webkit-scrollbar { width: 5px; }
+
+.form-panel::-webkit-scrollbar-track,
+.preview-panel::-webkit-scrollbar-track,
+.sharing-panel::-webkit-scrollbar-track { background: var(--scroll-track); }
+
+.form-panel::-webkit-scrollbar-thumb,
+.preview-panel::-webkit-scrollbar-thumb,
+.sharing-panel::-webkit-scrollbar-thumb {
+    background: var(--scroll-thumb); border-radius: 4px;
+}
+
+/* ── Status indicators ──────────────────────────────────────────────── */
+/* ── STATUS INDICATORS (Header Chips) ─────────────────────────────── */
+.save-status {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 5px 12px; border-radius: 20px;
+    font-size: 0.75rem; font-weight: 500;
+    transition: all 0.2s; min-width: 80px; justify-content: center;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--tx-2);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    white-space: nowrap;
+}
+.save-status svg { flex-shrink: 0; width: 14px; height: 14px; stroke: currentColor; fill: none; }
+.save-status.saving { color: #60a5fa; border-color: rgba(96,165,250,0.2); background: rgba(96,165,250,0.08); }
+.save-status.saved  { color: #34d399; border-color: rgba(52,211,153,0.2); background: rgba(52,211,153,0.08); }
+.save-status.error  { color: #f87171; border-color: rgba(248,113,113,0.2); background: rgba(248,113,113,0.08); cursor: pointer; }
+.save-status.error:hover { background: rgba(248,113,113,0.14); }
+
+.update-indicator { font-size: 0.7rem; font-weight: 400; opacity: 0.7; margin-left: 4px; }
+
+.connection-status {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 5px 12px; border-radius: 20px;
+    font-size: 0.75rem; font-weight: 500;
+    min-width: 72px; justify-content: center;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+.connection-status svg { flex-shrink: 0; width: 14px; height: 14px; stroke: currentColor; fill: none; }
+.connection-status.connected  { color: #34d399 !important; border-color: rgba(52,211,153,0.2); background: rgba(52,211,153,0.08); }
+.connection-status.disconnected { color: #f87171 !important; border-color: rgba(248,113,113,0.2); background: rgba(248,113,113,0.08); }
+
+.connected-users {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 5px 12px; border-radius: 20px;
+    font-size: 0.75rem; font-weight: 500;
+    min-width: 72px; justify-content: center;
+    background: rgba(99,102,241,0.08);
+    color: #818cf8 !important;
+    border: 1px solid rgba(99,102,241,0.2);
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+.connected-users:hover { background: rgba(99,102,241,0.14); }
+.connected-users svg { flex-shrink: 0; width: 14px; height: 14px; stroke: currentColor; fill: none; }
+
+/* Light-mode overrides for status chips */
+[data-theme="light"] .save-status,
+[data-theme="light"] .connection-status {
+    background: var(--bg-2); border-color: var(--bdr);
+}
+[data-theme="light"] .connected-users {
+    background: rgba(79,70,229,0.06); border-color: rgba(79,70,229,0.15); color: #6366f1 !important;
+}
+
+/* ── Spinner animation ──────────────────────────────────────────────── */
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+.animate-spin { animation: spin 1s linear infinite; }
+

@@ -1,0 +1,312 @@
+.iitkgp-resume {
+    background-color: white;
+    padding: 24px;
+    max-width: 8.5in;
+    width: 8.5in;
+    margin: 0 auto;
+    font-family: 'Helvetica', 'Arial', sans-serif;
+    font-size: 10pt;
+    color: #000000;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.iitkgp-header {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 16px;
+    width: 100%;
+    padding: 0 20px;
+    /* Increased padding to move logos further from margins */
+    box-sizing: border-box;
+}
+
+.iitkgp-logo {
+    width: 80px;
+    /* Increased from 64px */
+    height: 80px;
+    /* Increased from 64px */
+    margin-right: 24px;
+    /* Increased margin for better spacing */
+    background-color: #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    color: #666666;
+    flex-shrink: 0;
+}
+
+.iitkgp-profile {
+    width: 80px;
+    /* Increased from 64px */
+    height: 80px;
+    /* Increased from 64px */
+    margin-left: 24px;
+    /* Increased margin for better spacing */
+    background-color: #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    color: #666666;
+    flex-shrink: 0;
+    border-radius: 50%;
+}
+
+.iitkgp-center-info {
+    flex: 1;
+    text-align: center;
+    min-width: 0;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    padding: 0 20px;
+    /* Increased padding for better text spacing */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.iitkgp-name {
+    font-weight: bold;
+    font-size: 0.9rem;
+    /* Slightly increased to accommodate larger layout */
+    margin-bottom: 6px;
+    /* Increased margin */
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.iitkgp-program {
+    font-weight: bold;
+    font-size: 0.75rem;
+    /* Slightly increased */
+    margin-bottom: 6px;
+    /* Increased margin */
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.iitkgp-contact-full {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    width: 100%;
+    font-size: 0.65rem;
+    margin-bottom: 16px;
+    padding: 8px 20px;
+    /* Increased horizontal padding to match header */
+    border-top: 1px solid #e5e5e5;
+    white-space: nowrap;
+    box-sizing: border-box;
+}
+
+.iitkgp-contact-full .contact-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    white-space: nowrap;
+    flex-shrink: 1;
+    min-width: 0;
+    font-size: 9px;
+}
+
+.iitkgp-contact-full .contact-item svg {
+    flex-shrink: 0;
+}
+
+.iitkgp-contact a {
+    color: #2563eb;
+    text-decoration: none;
+}
+
+.iitkgp-section {
+    background-color: #dce6f2;
+    padding: 4px 0;
+    text-align: center;
+    font-weight: bold;
+    font-size: 0.85rem;
+    margin-bottom: 8px;
+}
+
+.iitkgp-education-table {
+    width: 100%;
+    font-size: 0.7rem;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.iitkgp-education-table thead tr {
+    font-weight: bold;
+}
+
+.iitkgp-education-table td {
+    padding: 2px 4px;
+    vertical-align: top;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+    line-height: 1.3;
+}
+
+.iitkgp-education-table tr {
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.iitkgp-item {
+    margin-bottom: 12px;
+    font-size: 0.7rem;
+    text-align: left;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.iitkgp-item-header {
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+    margin-bottom: 2px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    gap: 8px;
+}
+
+.iitkgp-item-header span:first-child {
+    flex: 1;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+}
+
+.iitkgp-item-header span:last-child {
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
+.iitkgp-bullet-list {
+    list-style-type: disc;
+    padding-left: 20px;
+    margin-top: 4px;
+    text-align: left;
+}
+
+.iitkgp-bullet-list li {
+    margin-bottom: 2px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+    line-height: 1.3;
+}
+
+.skills-container {
+    text-align: left;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.iitkgp-skills-category {
+    font-weight: bold;
+    margin-top: 4px;
+    margin-bottom: 4px;
+    font-size: 0.7rem;
+    text-align: left;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.3;
+}
+
+.iitkgp-footer {
+    text-align: center;
+    font-size: 0.7rem;
+    color: #666666;
+    margin-top: 16px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+@media (max-width: 800px) {
+    .iitkgp-contact-full {
+        font-size: 0.6rem;
+    }
+
+    /* Adjust logo sizes for smaller screens */
+    .iitkgp-logo,
+    .iitkgp-profile {
+        width: 70px;
+        height: 70px;
+    }
+}
+
+@media (max-width: 700px) {
+    .iitkgp-contact-full {
+        font-size: 0.55rem;
+    }
+
+    /* Further adjust logo sizes for very small screens */
+    .iitkgp-logo,
+    .iitkgp-profile {
+        width: 60px;
+        height: 60px;
+        margin-left: 12px;
+        margin-right: 12px;
+    }
+}
+/* In your IITKGPTemplate.css */
+/* Add to your existing IITKGPTemplate.css */
+.page-break-container {
+    width: 595px;
+    min-height: 842px;
+    padding: 24px;
+    box-sizing: border-box;
+    background-color: white;
+    margin-bottom: 20px;
+    position: relative;
+    break-after: page;
+    page-break-after: always;
+}
+
+.iitkgp-resume {
+    box-sizing: border-box;
+    width: 100%;
+    height: auto;
+    background-color: white;
+}
+
+@media print {
+    .iitkgp-resume {
+        width: 100% !important;
+        height: auto !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        box-shadow: none !important;
+        transform: none !important;
+    }
+
+    .iitkgp-resume-content {
+        width: 100% !important;
+        height: auto !important;
+    }
+
+    /* Ensure page breaks work */
+    .page-break {
+        page-break-after: always;
+    }
+}
+
+/* Fix for PDF generation */
+.iitkgp-resume {
+    box-sizing: border-box;
+    width: 100%;
+    height: auto;
+}
+
+.iitkgp-resume-content {
+    width: 100%;
+    height: auto;
+}
+
+/* Prevent content splitting across pages */
+.iitkgp-item,
+.iitkgp-section {
+    page-break-inside: avoid;
+    break-inside: avoid; }

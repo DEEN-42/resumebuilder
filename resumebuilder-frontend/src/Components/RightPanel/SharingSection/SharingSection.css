@@ -1,0 +1,162 @@
+﻿/* SharingSection.css — themed via CSS variables, teal accent */
+
+.sharing-section {
+  height: 100%; display: flex; flex-direction: column;
+  background: var(--rp-bg); box-sizing: border-box;
+  transition: background 0.25s;
+}
+
+/* Header */
+.sharing-header {
+  padding: 18px 16px 14px;
+  border-bottom: 1px solid var(--rp-border);
+  background: var(--rp-surface);
+  position: relative;
+  transition: background 0.25s;
+}
+
+.sharing-header::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg,#14b8a6,transparent);
+}
+
+.sharing-title { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+.sharing-title h3 { font-size: 0.9rem; font-weight: 700; color: var(--rp-txt); margin: 0; }
+.sharing-icon { width: 17px; height: 17px; color: #14b8a6; stroke-width: 2; flex-shrink: 0; }
+.sharing-subtitle { font-size: 0.72rem; color: var(--rp-sub); line-height: 1.4; }
+
+.refresh-button {
+  position: absolute; top: 16px; right: 14px;
+  display: flex; align-items: center; gap: 5px;
+  padding: 5px 10px;
+  background: var(--rp-raised); color: var(--rp-sub);
+  border: 1px solid var(--rp-border);
+  border-radius: 7px; font-size: 0.7rem; font-weight: 500;
+  cursor: pointer; transition: all 0.2s;
+}
+.refresh-button:hover:not(:disabled) { background: rgba(20,184,166,0.15); border-color: #14b8a6; color: #14b8a6; }
+.refresh-button:disabled { opacity: 0.45; cursor: not-allowed; }
+.refresh-icon { width: 12px; height: 12px; stroke-width: 2; }
+.refresh-icon.spinning { animation: sp-spin 0.9s linear infinite; }
+
+/* Share input */
+/* Scope under .sharing-section to win over dashboard.css class collisions */
+.sharing-section .share-input-section {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--rp-border);
+  background: var(--rp-surface);
+  transition: background 0.25s;
+}
+
+.sharing-section .input-group { display: flex; flex-direction: column; gap: 8px; }
+.sharing-section .input-wrapper { position: relative; }
+
+.sharing-section .share-input {
+  width: 100%; padding: 9px 12px;
+  border: 1px solid var(--rp-border); border-radius: 8px;
+  font-size: 0.8rem; background: var(--rp-inp);
+  color: var(--rp-txt);
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+  box-sizing: border-box;
+}
+.sharing-section .share-input::placeholder { color: var(--rp-muted); }
+.sharing-section .share-input:focus { outline: none; border-color: #14b8a6; box-shadow: 0 0 0 3px rgba(20,184,166,0.15); }
+.sharing-section .share-input:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.sharing-section .share-button {
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 9px;
+  background: linear-gradient(135deg,#14b8a6,#0d9488); color: #fff;
+  border: none; border-radius: 8px; font-size: 0.8rem; font-weight: 600;
+  cursor: pointer; transition: transform 0.15s, box-shadow 0.15s;
+  box-shadow: 0 2px 10px rgba(20,184,166,0.35);
+}
+.sharing-section .share-button:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(20,184,166,0.5); }
+.sharing-section .share-button:disabled { background: var(--bg-4); box-shadow: none; cursor: not-allowed; color: var(--tx-3); }
+
+.sharing-section .button-icon { width: 14px; height: 14px; stroke-width: 2; }
+.sharing-section .spinner { width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: sp-spin 0.8s linear infinite; }
+
+/* Shared list */
+.shared-emails-section {
+  flex: 1; padding: 14px 16px; overflow-y: auto;
+  background: var(--rp-bg); transition: background 0.25s;
+}
+.shared-emails-section::-webkit-scrollbar { width: 4px; }
+.shared-emails-section::-webkit-scrollbar-track { background: transparent; }
+.shared-emails-section::-webkit-scrollbar-thumb { background: var(--rp-scroll); border-radius: 4px; }
+
+.shared-emails-header { display: flex; align-items: center; gap: 6px; margin-bottom: 12px; }
+.shared-emails-header h4 {
+  font-size: 0.7rem; font-weight: 600; color: var(--rp-muted);
+  margin: 0; text-transform: uppercase; letter-spacing: 0.07em;
+}
+.section-icon { width: 14px; height: 14px; color: var(--rp-muted); stroke-width: 2; }
+
+/* Loading */
+.loading-state { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 28px 0; color: var(--rp-sub); font-size: 0.78rem; }
+.loading-spinner { width: 16px; height: 16px; border: 2px solid var(--rp-border); border-top-color: #14b8a6; border-radius: 50%; animation: sp-spin 0.8s linear infinite; }
+
+/* Empty */
+.empty-state { text-align: center; padding: 32px 12px; color: var(--rp-muted); }
+.empty-icon { width: 48px; height: 48px; margin: 0 auto 12px; display: flex; align-items: center; justify-content: center; background: var(--rp-raised); border: 1px solid var(--rp-border); border-radius: 14px; color: var(--rp-muted); }
+.empty-state p { font-size: 0.82rem; font-weight: 600; color: var(--rp-sub); margin: 0 0 4px; }
+.empty-state span { font-size: 0.72rem; color: var(--rp-muted); }
+
+/* User cards */
+.shared-emails-list { display: flex; flex-direction: column; gap: 8px; }
+
+.shared-email-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 12px;
+  background: var(--rp-surface); border: 1px solid var(--rp-border);
+  border-radius: 10px;
+  transition: border-color 0.2s, background 0.2s;
+  animation: sp-rise 0.25s ease-out;
+}
+.shared-email-item:hover { background: var(--rp-raised); border-color: var(--bdr-strong); }
+.shared-email-item.online  { border-left: 2px solid #14b8a6; }
+.shared-email-item.offline { border-left: 2px solid var(--bg-4); }
+
+.email-info { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
+
+.email-avatar {
+  width: 36px; height: 36px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; position: relative; overflow: visible;
+  background: linear-gradient(135deg,#14b8a6,#0d9488);
+  box-shadow: 0 2px 8px rgba(20,184,166,0.3);
+}
+.profile-picture { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+.initials { color: #fff; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.04em; }
+
+.status-indicator {
+  position: absolute; bottom: 0; right: 0;
+  width: 9px; height: 9px; border-radius: 50%;
+  border: 2px solid var(--rp-surface); background: var(--bg-4);
+}
+.email-avatar.online  .status-indicator { background: var(--success); }
+.email-avatar.offline .status-indicator { background: var(--bg-4); }
+
+.email-details { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.user-name  { font-size: 0.8rem; font-weight: 600; color: var(--rp-txt); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.user-email { font-size: 0.68rem; color: var(--rp-sub); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.user-status { font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--rp-muted); }
+.shared-email-item.online  .user-status { color: var(--success); }
+.shared-email-item.offline .user-status { color: var(--rp-muted); }
+
+.remove-button {
+  display: flex; align-items: center; justify-content: center;
+  width: 30px; height: 30px;
+  background: var(--rp-raised); border: 1px solid var(--rp-border);
+  border-radius: 7px; color: var(--rp-muted);
+  cursor: pointer; transition: all 0.2s; flex-shrink: 0;
+}
+.remove-button:hover { background: rgba(248,113,113,0.15); border-color: var(--error); color: var(--error); }
+.remove-icon { width: 14px; height: 14px; stroke-width: 2; }
+
+@keyframes sp-spin { to { transform: rotate(360deg); } }
+@keyframes sp-rise {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

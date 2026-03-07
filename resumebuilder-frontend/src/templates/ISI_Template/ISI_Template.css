@@ -1,0 +1,310 @@
+.isi-resume {
+    background-color: white;
+    padding: 20px;
+    max-width: 8.5in;
+    width: 8.5in;
+    margin: 0 auto;
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 11pt;
+    color: #000000;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.4;
+}
+
+/* Header Section */
+.isi-header {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #000000;
+    padding-bottom: 15px;
+}
+
+.isi-logo {
+    width: 60px;
+    height: 60px;
+    margin-right: 20px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.isi-center-info {
+    flex: 1;
+    text-align: left;
+    margin-right: 20px;
+}
+
+.isi-name {
+    font-size: 18px;
+    font-weight: bold;
+    margin: 0 0 5px 0;
+    color: #000000;
+    text-align: left;
+}
+
+.isi-program {
+    font-size: 12px;
+    margin: 2px 0;
+    color: #000000;
+    text-align: left;
+}
+
+.isi-institute {
+    font-size: 12px;
+    margin: 2px 0;
+    color: #000000;
+    text-align: left;
+}
+
+.isi-contact-info {
+    text-align: right;
+    flex-shrink: 0;
+    font-size: 11px;
+    min-width: 200px;
+    /* Ensure minimum width for proper alignment */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    /* Right align all child elements */
+}
+
+.isi-contact-info p {
+    margin: 2px 0;
+    text-align: right;
+    width: 100%;
+    /* Full width to ensure proper alignment */
+    display: flex;
+    justify-content: flex-end;
+    /* Right align content within paragraph */
+    align-items: center;
+    gap: 6px;
+}
+
+.isi-contact-info p a {
+    color: inherit;
+    text-decoration: none;
+    word-break: break-all;
+    /* Break long URLs if needed */
+}
+
+/* Ensure icons and text are properly aligned */
+.isi-contact-info p svg {
+    flex-shrink: 0;
+    /* Prevent icons from shrinking */
+}
+
+/* Education Table */
+.isi-education-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 15px;
+    font-size: 11px;
+}
+
+.isi-education-table th,
+.isi-education-table td {
+    border: 1px solid #000000;
+    padding: 6px 8px;
+    text-align: left;
+    vertical-align: top;
+}
+
+.isi-education-table th {
+    background-color: #f0f0f0;
+    font-weight: bold;
+    text-align: left;
+}
+
+.isi-education-table td {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    text-align: left;
+}
+
+/* Gray Section Headers */
+.isi-gray-section {
+    background-color: #d9d9d9;
+    padding: 4px 8px;
+    font-weight: bold;
+    font-size: 12px;
+    text-align: center;
+    margin: 15px 0 8px 0;
+    border: 1px solid #000000;
+}
+
+/* Work Experience Items */
+.isi-work-item {
+    margin-bottom: 12px;
+    text-align: left;
+}
+
+.isi-work-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 4px;
+    gap: 10px;
+    text-align: left;
+}
+
+.isi-work-header span:first-child {
+    flex: 1;
+    font-weight: bold;
+    text-align: left;
+}
+
+.isi-date {
+    flex-shrink: 0;
+    font-weight: normal;
+    text-align: right;
+}
+
+/* Skills Items */
+.isi-skill-item {
+    margin-bottom: 6px;
+    font-size: 11px;
+    text-align: left;
+}
+
+.isi-skill-item span:first-child {
+    font-weight: bold;
+}
+
+/* Project Items */
+.isi-project-item {
+    margin-bottom: 12px;
+    text-align: left;
+}
+
+/* Course Items */
+.isi-course-item {
+    margin-bottom: 6px;
+    font-size: 11px;
+    text-align: left;
+}
+
+.isi-course-item span:first-child {
+    font-weight: bold;
+}
+
+.isi-grade {
+    font-weight: normal;
+}
+
+/* Position Items */
+.isi-position-item {
+    margin-bottom: 12px;
+    text-align: left;
+}
+
+/* Bullet Lists */
+.isi-bullet-list {
+    list-style-type: disc;
+    margin: 0 0 10px 0;
+    padding-left: 20px;
+    text-align: left;
+}
+
+.isi-bullet-list li {
+    margin-bottom: 3px;
+    font-size: 11px;
+    line-height: 1.3;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    text-align: left;
+}
+
+/* Nested lists in bullet points */
+.isi-bullet-list ul {
+    list-style-type: circle;
+    margin-top: 3px;
+    padding-left: 15px;
+}
+
+/* Page break handling */
+.isi-section,
+.isi-work-item,
+.isi-project-item,
+.isi-position-item {
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+
+/* Print styles */
+@media print {
+    .isi-resume {
+        width: 100% !important;
+        padding: 15px !important;
+        margin: 0 !important;
+        box-shadow: none !important;
+    }
+
+    .isi-gray-section {
+        background-color: #d9d9d9 !important;
+    }
+
+    .page-break {
+        page-break-after: always;
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 800px) {
+    .isi-header {
+        flex-direction: column;
+        text-align: left;
+    }
+
+    .isi-logo,
+    .isi-center-info,
+    .isi-contact-info {
+        margin: 5px 0;
+        text-align: left;
+    }
+
+    .isi-contact-info {
+        text-align: left;
+        align-items: flex-start;
+    }
+
+    .isi-contact-info p {
+        justify-content: flex-start;
+    }
+
+    .isi-work-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .isi-education-table {
+        font-size: 10px;
+    }
+
+    .isi-education-table th,
+    .isi-education-table td {
+        padding: 4px 6px;
+    }
+}
+
+/* Fix for page break container compatibility */
+.page-break-container {
+    width: 595px;
+    min-height: 842px;
+    padding: 20px;
+    box-sizing: border-box;
+    background-color: white;
+    margin-bottom: 20px;
+    position: relative;
+    break-after: page;
+    page-break-after: always;
+}
+
+.isi-resume {
+    box-sizing: border-box;
+    width: 100%;
+    height: auto;
+    background-color: white;
+}

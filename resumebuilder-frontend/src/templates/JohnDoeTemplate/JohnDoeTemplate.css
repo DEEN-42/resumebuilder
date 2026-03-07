@@ -1,0 +1,324 @@
+.johndoe-resume {
+    background-color: white;
+    padding: 36px 48px;
+    max-width: 8.5in;
+    width: 8.5in;
+    margin: 0 auto;
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 11pt;
+    color: #000000;
+    line-height: 1.2;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+/* Header Styles - Left aligned */
+.johndoe-header {
+    text-align: left;
+    margin-bottom: 24px;
+    border-bottom: 1px solid #000000;
+    padding-bottom: 12px;
+}
+
+.johndoe-name {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0 0 8px 0;
+    letter-spacing: 1px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    text-align: left;
+}
+
+.johndoe-contact-info {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 4px;
+    font-size: 11px;
+    flex-wrap: wrap;
+    text-align: left;
+}
+
+.johndoe-contact-info span:not(:last-child)::after {
+    content: " | ";
+    margin-left: 12px;
+    color: #666666;
+}
+
+.johndoe-links {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 12px;
+    font-size: 11px;
+    flex-wrap: wrap;
+    text-align: left;
+}
+
+.johndoe-links span:not(:last-child)::after {
+    content: " | ";
+    margin-left: 12px;
+    color: #666666;
+}
+
+/* Section Styles */
+.johndoe-section {
+    margin-bottom: 18px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    text-align: left;
+}
+
+.johndoe-section-title {
+    font-size: 14px;
+    font-weight: bold;
+    margin: 0 0 8px 0;
+    padding-bottom: 2px;
+    border-bottom: 1px solid #000000;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    text-align: left;
+}
+
+.johndoe-section-content {
+    margin-left: 0;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    text-align: left;
+}
+
+/* Item Headers */
+.johndoe-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 4px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    gap: 12px;
+    text-align: left;
+}
+
+.johndoe-item-header span:first-child {
+    flex: 1;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+    text-align: left;
+}
+
+.johndoe-item-header span:last-child {
+    flex-shrink: 0;
+    white-space: nowrap;
+    font-style: italic;
+    text-align: right;
+}
+
+/* Education Items */
+.johndoe-education-item {
+    margin-bottom: 12px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+/* Experience Items */
+.johndoe-experience-item {
+    margin-bottom: 14px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+/* Publication Items */
+.johndoe-publication-item {
+    margin-bottom: 12px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+/* Project Items */
+.johndoe-project-item {
+    margin-bottom: 14px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+/* Competition Items */
+.johndoe-competition-item {
+    margin-bottom: 12px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+/* Position Items */
+.johndoe-position-item {
+    margin-bottom: 12px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+/* Skill Items */
+.johndoe-skill-item {
+    margin-bottom: 6px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.3;
+}
+
+/* Bullet Lists */
+.johndoe-bullet-list {
+    list-style-type: disc;
+    padding-left: 18px;
+    margin: 4px 0 0 0;
+}
+
+.johndoe-bullet-list li {
+    margin-bottom: 3px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+    line-height: 1.3;
+}
+
+/* Page Break Styles */
+.page-break-container {
+    width: 595px;
+    min-height: 842px;
+    padding: 36px 48px;
+    box-sizing: border-box;
+    background-color: white;
+    margin-bottom: 20px;
+    position: relative;
+    break-after: page;
+    page-break-after: always;
+}
+
+.johndoe-resume {
+    box-sizing: border-box;
+    width: 100%;
+    height: auto;
+    background-color: white;
+}
+
+/* Print Styles */
+@media print {
+    .johndoe-resume {
+        width: 100% !important;
+        height: auto !important;
+        padding: 36px 48px !important;
+        margin: 0 !important;
+        box-shadow: none !important;
+        transform: none !important;
+    }
+
+    .johndoe-resume-content {
+        width: 100% !important;
+        height: auto !important;
+    }
+
+    .page-break {
+        page-break-after: always;
+    }
+
+    .johndoe-section {
+        page-break-inside: avoid;
+        break-inside: avoid;
+    }
+
+    .johndoe-experience-item,
+    .johndoe-project-item,
+    .johndoe-education-item,
+    .johndoe-publication-item,
+    .johndoe-competition-item,
+    .johndoe-position-item {
+        page-break-inside: avoid;
+        break-inside: avoid;
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 800px) {
+    .johndoe-resume {
+        padding: 24px 32px;
+    }
+
+    .johndoe-contact-info,
+    .johndoe-links {
+        font-size: 10px;
+        gap: 8px;
+    }
+
+    .johndoe-contact-info span:not(:last-child)::after,
+    .johndoe-links span:not(:last-child)::after {
+        margin-left: 8px;
+    }
+}
+
+@media (max-width: 600px) {
+    .johndoe-resume {
+        padding: 20px 24px;
+    }
+
+    .johndoe-name {
+        font-size: 20px;
+    }
+
+    .johndoe-section-title {
+        font-size: 13px;
+    }
+
+    .johndoe-contact-info,
+    .johndoe-links {
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .johndoe-contact-info span:not(:last-child)::after,
+    .johndoe-links span:not(:last-child)::after {
+        display: none;
+    }
+}
+
+/* Fix for PDF generation */
+.johndoe-resume {
+    box-sizing: border-box;
+    width: 100%;
+    height: auto;
+}
+
+.johndoe-resume-content {
+    width: 100%;
+    height: auto;
+}
+
+/* Prevent awkward breaks */
+.johndoe-section,
+.johndoe-education-item,
+.johndoe-experience-item,
+.johndoe-project-item,
+.johndoe-publication-item,
+.johndoe-competition-item,
+.johndoe-position-item {
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+
+/* Typography refinements */
+strong {
+    font-weight: bold;
+}
+
+em {
+    font-style: italic;
+}
+
+/* Link styling */
+a {
+    color: #000000;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}

@@ -1,0 +1,364 @@
+/* Profile Picture Section */
+.profile-picture-section {
+    margin-bottom: 20px;
+    padding: 15px;
+    border: 1px dashed var(--bdr);
+    border-radius: 8px;
+    background-color: var(--bg-1);
+    transition: all 0.2s ease;
+}
+
+.profile-picture-section:hover {
+    border-color: var(--accent);
+    background-color: var(--bg-2);
+}
+
+.picture-upload-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.upload-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 20px;
+    cursor: pointer;
+    color: var(--tx-3);
+    transition: color 0.2s ease;
+}
+
+.upload-placeholder:hover {
+    color: var(--accent);
+}
+
+.picture-preview {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.profile-image {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--bdr);
+    box-shadow: var(--shadow-sm);
+}
+
+.change-picture-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border: 1px solid var(--bdr);
+    border-radius: 6px;
+    background: var(--bg-2);
+    color: var(--tx-2);
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.change-picture-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--bg-3);
+}
+
+/* Institute Logo Section */
+.institute-logo-section {
+    margin-bottom: 20px;
+    padding: 15px;
+    border: 1px dashed var(--bdr);
+    border-radius: 8px;
+    background-color: var(--bg-1);
+    transition: all 0.2s ease;
+}
+
+.institute-logo-section:hover {
+    border-color: var(--success);
+    background-color: var(--bg-2);
+}
+
+.logo-upload-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo-preview {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.institute-logo-image {
+    width: 100px;
+    height: 60px;
+    object-fit: contain;
+    border: 2px solid var(--bg-2);
+    border-radius: 6px;
+    box-shadow: var(--shadow-sm);
+    background: #fff; /* Always white so logo is visible */
+    padding: 5px;
+}
+
+.change-logo-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border: 1px solid var(--bdr);
+    border-radius: 6px;
+    background: var(--bg-2);
+    color: var(--tx-2);
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.change-logo-btn:hover {
+    border-color: var(--success);
+    color: var(--success);
+    background-color: var(--bg-3);
+}
+
+.hidden-file-input {
+    display: none;
+}
+
+/* Style Settings */
+.style-settings {
+    margin-top: 25px;
+    padding: 20px;
+    background-color: var(--bg-2);
+    border-radius: 8px;
+    border: 1px solid var(--bdr);
+}
+
+.settings-title {
+    margin: 0 0 16px 0;
+    color: var(--tx-2);
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+.style-group {
+    margin-bottom: 16px;
+    padding: 12px;
+    background: var(--bg-1);
+    border-radius: 6px;
+    border: 1px solid var(--bdr);
+}
+
+.style-group:last-child {
+    margin-bottom: 0;
+}
+
+.style-group-title {
+    margin: 0 0 12px 0;
+    color: #343a40;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.style-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.style-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.font-size-control {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #6c757d;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.font-size-label {
+    font-size: 12px;
+    color: #6c757d;
+    font-weight: 500;
+}
+
+.font-size-input {
+    width: 60px;
+    padding: 4px 8px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 12px;
+    color: #495057;
+    background-color: white;
+    text-align: center;
+}
+
+.font-family-control {
+    flex: 1;
+    min-width: 120px;
+}
+
+.font-family-select {
+    width: 100%;
+    padding: 4px 8px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 12px;
+    background: white;
+    color: #495057;
+}
+
+.color-control {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #6c757d;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.color-label {
+    font-size: 12px;
+    color: #6c757d;
+    font-weight: 500;
+}
+
+.color-input {
+    width: 40px;
+    height: 30px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    cursor: pointer;
+    padding: 1px;
+    background: white;
+}
+
+.text-style-controls {
+    display: flex;
+    gap: 4px;
+}
+
+.style-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 2px solid #cbd5e0;
+    border-radius: 6px;
+    background: white;
+    color: #2d3748;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 14px;
+}
+
+.style-button:hover {
+    border-color: #4299e1;
+    color: #4299e1;
+    background-color: #ebf8ff;
+}
+
+.style-button.active {
+    background: #4299e1;
+    color: white;
+    border-color: #3182ce;
+    box-shadow: 0 2px 4px rgba(66, 153, 225, 0.3);
+}
+
+/* Icon Styles */
+.style-button svg,
+.font-size-control svg,
+.color-control svg {
+    width: 18px;
+    height: 18px;
+    color: currentColor;
+    flex-shrink: 0;
+}
+
+.style-button:hover svg {
+    color: currentColor;
+}
+
+.style-button.active svg {
+    color: white;
+}
+
+.font-size-control svg,
+.color-control svg {
+    color: #6c757d;
+}
+
+/* Form Styles */
+.personal-info-form {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.form-title {
+    margin: 0 0 20px 0;
+    color: #333;
+    font-size: 18px;
+    font-weight: 600;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 8px;
+}
+
+.form-fields {
+    display: grid;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.form-input {
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: border-color 0.2s ease;
+    color: #495057;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+.form-input::placeholder {
+    color: #6c757d;
+}
+
+@media (max-width: 768px) {
+    .style-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .font-family-control {
+        min-width: auto;
+    }
+
+    .text-style-controls {
+        justify-content: center;
+    }
+}
