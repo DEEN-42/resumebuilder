@@ -9,6 +9,11 @@ import Resume from "../models/resumeDatamodel.js";
 import User from "../models/usermodel.js";
 import { sendInstantEmail } from "../Controllers/mailFunctionality.js";
 
+const C = '\x1b[36m'; // cyan
+const R = '\x1b[0m';  // reset
+const log  = (...a) => console.log(`${C}[Deploy Worker]${R}`, ...a);
+const lerr = (...a) => console.error(`${C}[Deploy Worker]${R}`, ...a);
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -39,6 +44,7 @@ async function commitFile(owner, repo, filePath, content, sha) {
 
 async function processDeploy(job) {
   const { resumeId, userEmail, resumeData } = job.data;
+  log(`Job ${job.id} started → resumeId: ${resumeId}, user: ${userEmail}`);
 
   const user = await User.findOne({ email: userEmail });
   if (!user) throw new Error("User not found.");
@@ -67,6 +73,7 @@ async function processDeploy(job) {
   if (deploymentInfo && deploymentInfo.githubRepo) {
     // --- UPDATE EXISTING REPO ---
     const existingRepoName = deploymentInfo.githubRepo;
+    log(`Job ${job.id} updating existing repo: ${existingRepoName}`);
 
     const { data: fileData } = await octokit.repos.getContent({
       owner: GITHUB_USERNAME,
@@ -80,6 +87,7 @@ async function processDeploy(job) {
       finalScript,
       fileData.sha
     );
+    log(`Job ${job.id} script.js committed → Vercel redeploy triggered`);
 
     return {
       message: "Update pushed to GitHub. Vercel deployment triggered.",
@@ -88,6 +96,7 @@ async function processDeploy(job) {
   }
 
   // --- CREATE NEW REPO AND DEPLOY ---
+  log(`Job ${job.id} creating new GitHub repo: ${repoName}`);
   const { data: createdRepo } =
     await octokit.repos.createForAuthenticatedUser({
       name: repoName,
@@ -108,6 +117,7 @@ async function processDeploy(job) {
   await commitFile(GITHUB_USERNAME, repoName, "index.html", htmlContent);
   await commitFile(GITHUB_USERNAME, repoName, "styles.css", cssContent);
   await commitFile(GITHUB_USERNAME, repoName, "script.js", finalScript);
+  log(`Job ${job.id} committed 3 files to GitHub repo: ${repoName}`);
 
   const projectResponse = await fetch("https://api.vercel.com/v9/projects", {
     method: "POST",
@@ -130,6 +140,7 @@ async function processDeploy(job) {
       `Vercel project creation failed: ${projectData.error.message}`
     );
   }
+  log(`Job ${job.id} Vercel project created: ${repoName}`);
 
   const deploymentResponse = await fetch(
     "https://api.vercel.com/v13/deployments",
@@ -162,6 +173,7 @@ async function processDeploy(job) {
   }
 
   const vercelUrl = `https://${repoName}.vercel.app`;
+  log(`Job ${job.id} Vercel deployment triggered → ${vercelUrl}`);
 
   resume.deployment = { githubRepo: repoName, vercelUrl };
   await resume.save();
@@ -187,16 +199,14 @@ export function startDeployWorker(redisOpts) {
     connection: redisOpts,
     concurrency: 3,
   });
+  log('Worker started — queue: portfolio-deploy, concurrency: 3');
 
-  worker.on("completed", (job) => {
-    console.log(
-      `[Deploy Worker] Job ${job.id} completed for resume ${job.data.resumeId}`
-    );
+  worker.on("completed", (job, result) => {
+    log(`Job ${job.id} completed — resumeId: ${job.data.resumeId} | URL: ${result?.url ?? 'n/a'}`);
   });
 
   worker.on("failed", (job, err) => {
-    console.error(
-      `[Deploy Worker] Job ${job?.id} failed for resume ${job?.data?.resumeId}:`,
+    lerr(`Job ${job?.id} failed — resumeId: ${job?.data?.resumeId}:`,
       err.message
     );
   });
