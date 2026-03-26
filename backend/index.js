@@ -21,6 +21,19 @@ import { initDeployQueue } from "./Controllers/deployController.js";
 
 const PORT = process.env.PORT || 3030;
 
+function normalizeOrigin(value = "") {
+  return value.trim().replace(/\/$/, "");
+}
+
+function parseAllowedOrigins() {
+  const fromFrontendUrl = (process.env.FRONTEND_URL || "").split(",");
+  const fromFrontendUrls = (process.env.FRONTEND_URLS || "").split(",");
+
+  return [...fromFrontendUrl, ...fromFrontendUrls, "http://localhost:5173"]
+    .map(normalizeOrigin)
+    .filter(Boolean);
+}
+
 /** Parse a redis[s]:// URL into ioredis-compatible options for BullMQ. */
 function parseRedisUrl(url) {
   const parsed = new URL(url);
@@ -38,8 +51,7 @@ const startServer = async () => {
   const app = express();
   const server = createServer(app);
 
-  const frontendUrl = (process.env.FRONTEND_URL || "").replace(/\/$/, "");
-  const allowedOrigins = [frontendUrl, "http://localhost:5173"].filter(Boolean);
+  const allowedOrigins = parseAllowedOrigins();
 
   const pubClient = createClient({ url: process.env.REDIS_URL });
   const subClient = pubClient.duplicate();
@@ -49,7 +61,13 @@ const startServer = async () => {
 
   const io = new Server(server, {
     cors: {
-      origin: allowedOrigins,
+      origin: (origin, callback) => {
+        if (!origin || allowedOrigins.includes(normalizeOrigin(origin))) {
+          callback(null, true);
+        } else {
+          callback(new Error("Not allowed by CORS"));
+        }
+      },
       methods: ["GET", "POST", "PUT"],
       credentials: true,
     },
@@ -62,7 +80,7 @@ const startServer = async () => {
   app.use(
     cors({
       origin: (origin, callback) => {
-        if (!origin || allowedOrigins.includes(origin)) {
+        if (!origin || allowedOrigins.includes(normalizeOrigin(origin))) {
           callback(null, true);
         } else {
           callback(new Error("Not allowed by CORS"));
