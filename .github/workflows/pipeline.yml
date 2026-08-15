@@ -122,6 +122,8 @@ jobs:
 
       - name: ✅ Run Pytest tests
         run: pytest test_app.py
+        env:
+          GROQ_API_KEY: "dummy_key_for_tests"
 
   # ────────────────────────────────────────────────────────────────────────────
   # JOB 4: Deploy Backend to Render

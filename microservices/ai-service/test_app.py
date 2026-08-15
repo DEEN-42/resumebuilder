@@ -14,21 +14,8 @@ def test_health_check():
     assert response.json() == {"status": "ok"}
 
 @pytest.mark.asyncio
-@patch("llm_client.client.chat.completions.create", new_callable=AsyncMock)
-async def test_worker_process(mock_create):
+async def test_worker_process(mock_groq_api):
     """Test the BullMQ process function with a mocked Groq client."""
-    # Mock the API response
-    mock_message = MagicMock()
-    mock_message.content = '{"score": 85, "feedback": "Good resume."}'
-    
-    mock_choice = MagicMock()
-    mock_choice.message = mock_message
-    
-    mock_response = MagicMock()
-    mock_response.choices = [mock_choice]
-    
-    mock_create.return_value = mock_response
-
     # Mock the BullMQ Job
     mock_job = MagicMock(spec=Job)
     mock_job.id = "test-job-123"
@@ -39,5 +26,5 @@ async def test_worker_process(mock_create):
     result = await process(mock_job, "test-token")
 
     # Assertions
-    mock_create.assert_called_once()
+    mock_groq_api.chat.completions.create.assert_called_once()
     assert result == {"score": 85, "feedback": "Good resume."}

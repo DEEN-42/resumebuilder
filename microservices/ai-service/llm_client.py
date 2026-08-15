@@ -6,10 +6,17 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-client = AsyncGroq(api_key=os.environ.get("GROQ_API_KEY"))
+_client = None
+
+def get_client() -> AsyncGroq:
+    global _client
+    if _client is None:
+        _client = AsyncGroq(api_key=os.environ.get("GROQ_API_KEY", "dummy_key"))
+    return _client
 
 async def generate(prompt: str) -> dict:
     try:
+        client = get_client()
         response = await client.chat.completions.create(
             messages=[
                 {
