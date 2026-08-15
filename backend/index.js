@@ -18,6 +18,7 @@ import { startPersistenceWorker } from "./crdt/persistenceWorker.js";
 import { startPersistenceScheduler } from "./crdt/persistenceScheduler.js";
 import { startDeployWorker } from "./jobs/deployWorker.js";
 import { initDeployQueue } from "./Controllers/deployController.js";
+import { initAiQueue } from "./queues/aiQueue.js";
 
 const PORT = process.env.PORT || 3030;
 
@@ -137,6 +138,10 @@ const startServer = async () => {
   initDeployQueue(bullRedisOpts);
   startDeployWorker(bullRedisOpts);
   console.log("✅ BullMQ deploy worker started.");
+
+  // ─── BullMQ AI Queue ──────────────────────────────────────────────────
+  initAiQueue(bullRedisOpts);
+  console.log("✅ BullMQ AI queue initialized.");
 
   // Graceful shutdown
   process.on('SIGTERM', () => { stopScheduler(); process.exit(0); });
