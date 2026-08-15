@@ -94,6 +94,10 @@ const startServer = async () => {
 
   app.use(express.json());
 
+  app.get('/health', (req, res) => {
+    res.status(200).send('Server is awake');
+  });
+
   // ─── Request logger ───────────────────────────────────────────────────
   app.use((req, res, next) => {
     const start = Date.now();
