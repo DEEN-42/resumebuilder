@@ -1,4 +1,4 @@
-name: Keep Backend Awake
+name: Keep Services Awake
 
 on:
   schedule:
@@ -8,8 +8,11 @@ on:
   workflow_dispatch:
 
 jobs:
-  ping-server:
+  ping-services:
     runs-on: ubuntu-latest
     steps:
-      - name: 🌐 Ping Render Health Route
+      - name: 🌐 Ping Node.js Backend
         run: curl --silent --show-error --fail "${{ secrets.BACKEND_HEALTH_URL }}"
+
+      - name: 🌐 Ping AI Service
+        run: curl --silent --show-error --fail "${{ secrets.AI_SERVICE_HEALTH_URL }}"
