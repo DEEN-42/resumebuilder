@@ -17,19 +17,25 @@
    - [Write-Behind Persistence (BullMQ)](#write-behind-persistence-bullmq)
    - [Socket.IO (Presence Only)](#socketio-presence-only)
    - [REST API Layer](#rest-api-layer)
-7. [Frontend Architecture](#frontend-architecture)
+7. [AI Microservice Architecture](#ai-microservice-architecture)
+   - [Overview](#ai-service-overview)
+   - [FastAPI Application](#fastapi-application)
+   - [BullMQ Consumer Worker](#bullmq-consumer-worker)
+   - [LLM Client (Lazy Initialization)](#llm-client-lazy-initialization)
+   - [Job Flow: Node.js → Redis → Python](#job-flow)
+8. [Frontend Architecture](#frontend-architecture)
    - [Yjs Setup & Providers](#yjs-setup--providers)
    - [useYjsDocument Hook](#useyjsdocument-hook)
    - [CRDT Data Handlers](#crdt-data-handlers)
    - [Project Component (Orchestrator)](#project-component-orchestrator)
-8. [Data Model](#data-model)
+9. [Data Model](#data-model)
    - [Y.Doc Structure](#ydoc-structure)
    - [MongoDB Schema](#mongodb-schema)
    - [Legacy Migration](#legacy-migration)
-9. [Horizontal Scaling](#horizontal-scaling)
-10. [Security Model](#security-model)
-11. [File Map](#file-map)
-12. [Appendix: Before vs After](#appendix-before-vs-after)
+10. [Horizontal Scaling](#horizontal-scaling)
+11. [Security Model](#security-model)
+12. [File Map](#file-map)
+13. [Appendix: Before vs After](#appendix-before-vs-after)
 
 ---
 
@@ -83,30 +89,51 @@ This system is a **real-time collaborative CV/resume builder** that allows multi
 │  │               │ marks dirty      │  │                                │   │
 │  └───────────────┼──────────────────┘  │  • /resumes/* (CRUD, share)   │   │
 │                  │                     │  • /users/*   (auth)           │   │
-│                  ▼                     │  • /ai/*      (Gemini)         │   │
+│                  ▼                     │  • /ai/*      (enqueues jobs)  │   │
 │  ┌──────────────────────────────────┐  │  • /deploy/*  (portfolio)     │   │
-│  │   Persistence Scheduler (30s)    │  └────────────────────────────────┘   │
-│  │   Flushes dirty IDs → BullMQ    │                                       │
-│  └──────────────┬───────────────────┘                                       │
-│                 │ enqueue                                                    │
-│                 ▼                                                            │
-│  ┌──────────────────────────────────┐                                       │
-│  │   BullMQ Worker (yjs-persist)    │                                       │
-│  │                                  │                                       │
-│  │  1. Y.encodeStateAsUpdate(doc)   │          ┌───────────────────┐        │
-│  │  2. doc.toJSON()                 ├─────────►│    MongoDB        │        │
-│  │  3. Write yjsState + JSON ───────┤          │                   │        │
-│  │     to MongoDB in one update     │          │  yjsState (Buffer)│        │
-│  └──────────────────────────────────┘          │  resumeData (JSON)│        │
-│                                                │  globalStyles     │        │
-│  ┌──────────────────────────────────┐          └───────────────────┘        │
-│  │         Redis                    │                                       │
-│  │                                  │                                       │
-│  │  • Pub/Sub: yjs:<resumeId>       │  ◄── Cross-instance delta fanout     │
-│  │  • Socket.IO Adapter             │  ◄── Presence scaling                │
-│  │  • BullMQ job queue              │  ◄── Persistence job queue           │
-│  └──────────────────────────────────┘                                       │
+│  │   Persistence Scheduler (30s)    │  └──────────────┬─────────────────┘   │
+│  │   Flushes dirty IDs → BullMQ    │                 │ enqueue ai-tasks    │
+│  └──────────────┬───────────────────┘                 │                     │
+│                 │ enqueue                              ▼                    │
+│                 ▼                     ┌───────────────────────────────────┐  │
+│  ┌──────────────────────────────────┐ │  Redis (Upstash / local)          │  │
+│  │   BullMQ Worker (yjs-persist)    │ │                                   │  │
+│  │                                  │ │  • Pub/Sub: yjs:<resumeId>        │  │
+│  │  1. Y.encodeStateAsUpdate(doc)   │ │  • Socket.IO Adapter              │  │
+│  │  2. doc.toJSON()            ─────┤ │  • BullMQ: yjs-persist queue      │  │
+│  │  3. Write yjsState + JSON        │ │  • BullMQ: ai-tasks queue         │  │
+│  └──────────────────────────────────┘ └───────────────────────────────────┘  │
+│                                                            │                 │
+└────────────────────────────────────────────────────────────┼─────────────────┘
+                                                             │ BullMQ ai-tasks
+                                                             ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                   AI MICROSERVICE  (Python / FastAPI)                       │
+│                                                                             │
+│  ┌─────────────────────┐       ┌───────────────────────────────────────┐   │
+│  │  FastAPI App        │       │  BullMQ Worker (Python — asyncio)     │   │
+│  │  (uvicorn :8000)    │       │                                       │   │
+│  │                     │       │  • Consumes: ai-tasks queue           │   │
+│  │  GET /health        │       │  • process(job) called per job        │   │
+│  │  → { status: ok }   │       │  • Calls get_client().chat…create()   │   │
+│  │                     │       │  • Returns parsed JSON result         │   │
+│  └─────────────────────┘       └─────────────────┬─────────────────────┘   │
+│                                                  │                          │
+│                                                  ▼                          │
+│                                    ┌─────────────────────┐                  │
+│                                    │  Groq LLM Client     │                  │
+│                                    │  (lazy-initialized)  │                  │
+│                                    │  llama-3.3-70b-vers. │──► Groq API     │
+│                                    └─────────────────────┘                  │
 └─────────────────────────────────────────────────────────────────────────────┘
+                        │
+                        ▼
+             ┌─────────────────────┐
+             │     MongoDB          │
+             │  yjsState (Buffer)  │
+             │  resumeData (JSON)  │
+             │  globalStyles       │
+             └─────────────────────┘
 ```
 
 ---
@@ -124,9 +151,10 @@ This system is a **real-time collaborative CV/resume builder** that allows multi
 | **Presence** | Socket.IO + Redis Adapter | User join/leave notifications |
 | **Sync Protocol** | y-protocols | Yjs binary encoding/decoding (sync + awareness) |
 | **Message Bus** | Redis Pub/Sub | Cross-instance CRDT delta fanout |
-| **Job Queue** | BullMQ + ioredis | Background persistence jobs |
+| **Job Queue** | BullMQ + ioredis / bullmq-python | Background persistence & AI jobs |
 | **Database** | MongoDB (Mongoose) | Cold storage for resume documents |
-| **AI** | Google Gemini API | ATS scoring, resume suggestions |
+| **AI Microservice** | Python, FastAPI, uvicorn | Isolated AI processing service |
+| **AI Runtime** | Groq API (`llama-3.3-70b-versatile`) | LLM-based ATS scoring & suggestions |
 | **Auth** | JWT | Stateless authentication |
 | **File Storage** | Cloudinary | Profile/logo image uploads |
 
@@ -386,11 +414,151 @@ The REST API remains unchanged for non-collaborative operations:
 | `/resumes/delete/:id` | DELETE | Delete a resume |
 | `/resumes/share/:id` | PUT | Add a collaborator |
 | `/resumes/unshare/:id` | PUT | Remove a collaborator |
-| `/ai/atsScore` | POST | ATS scoring via Gemini API |
-| `/ai/internships` | POST | AI suggestions for internships |
+| `/ai/atsScore` | POST | Enqueues `score-ats` job → AI Microservice via BullMQ |
+| `/ai/internships` | POST | Enqueues `generate-content` job → AI Microservice via BullMQ |
 | `/deploy/:id` | POST | Deploy portfolio to Vercel |
 
 The `loadResumeSocket` controller now returns `yjsEnabled: true` in its response, signaling the frontend to initialize Yjs providers instead of relying on Socket.IO for data sync.
+
+> [!NOTE]
+> AI endpoints no longer call an external API directly from Node.js. They enqueue a BullMQ job onto the shared Redis `ai-tasks` queue. The Python AI microservice consumes that queue independently.
+
+---
+
+## AI Microservice Architecture
+
+### AI Service Overview
+
+The AI microservice is a **completely isolated Python service** that:
+
+- Runs independently from the Node.js backend
+- Exposes a lightweight **FastAPI** HTTP app for health checks and observability
+- Runs a **BullMQ Python worker** as a background asyncio task that consumes the `ai-tasks` Redis queue
+- Calls the **Groq API** (model: `llama-3.3-70b-versatile`) for all LLM tasks
+
+This separation means LLM workloads never block the Node.js event loop.
+
+**Directory:** `microservices/ai-service/`
+
+| File | Purpose |
+|------|---------|
+| `app.py` | FastAPI application entry point; starts the BullMQ worker on startup via `lifespan` |
+| `worker.py` | BullMQ Python consumer; monkey-patches a known idle-queue bug; supervised restart loop |
+| `llm_client.py` | Lazy-initialized Groq client; `generate(prompt)` coroutine |
+| `conftest.py` | Pytest fixtures; auto-mocks Groq API calls for all unit tests |
+| `test_app.py` | Isolated test suite (no Redis, no real Groq key required) |
+| `requirements.txt` | Python dependencies including test tools |
+| `.env.example` | Template for required environment variables |
+| `Dockerfile` | Container definition for deployment |
+
+### FastAPI Application
+
+**File:** `microservices/ai-service/app.py`
+
+The FastAPI app uses a `lifespan` async context manager to co-locate the HTTP server and the BullMQ worker in the same Python process:
+
+```
+uvicorn starts
+     │
+     ▼
+ lifespan() enters
+     ├── Installs asyncio exception handler (_handle_task_exception)
+     ├── asyncio.create_task(run_worker(stop_event))  ← BullMQ loop starts
+     └── yield  ← FastAPI serves requests
+
+ On shutdown:
+     ├── stop_event.set()
+     ├── await asyncio.wait_for(worker_task, timeout=10)
+     └── worker.close()
+```
+
+**Endpoints:**
+
+| Endpoint | Method | Response |
+|----------|--------|----------|
+| `/health` | GET | `{ "status": "ok" }` |
+
+### BullMQ Consumer Worker
+
+**File:** `microservices/ai-service/worker.py`
+
+The worker is a supervised loop that processes jobs from the `ai-tasks` BullMQ queue:
+
+```
+main(stop_event)
+  └── while not stop_event.is_set():
+        worker = Worker("ai-tasks", process, { connection: redis_opts })
+        await stop_event.wait()
+        → on crash: log + sleep(3) + restart
+        → on clean stop: worker.close()
+```
+
+**Job processor (`process(job, job_token)`):**
+
+```
+1. Validate job.name ∈ { "score-ats", "generate-content" }
+2. Extract job.data["prompt"]
+3. result = await generate(prompt)      ← calls Groq LLM
+4. return result                        ← BullMQ stores as job return value
+```
+
+A known `bullmq-python` v2.x bug (empty-set crash on idle queue) is monkey-patched at import time via `_safe_getCompleted`.
+
+**Redis connection:** Reads `REDIS_URL` (full URL form, e.g. `rediss://...`) or falls back to individual `REDIS_HOST` / `REDIS_PORT` / `REDIS_PASSWORD` variables. TLS (`rediss://`) is supported with certificate verification disabled for managed Redis providers (Upstash).
+
+### LLM Client (Lazy Initialization)
+
+**File:** `microservices/ai-service/llm_client.py`
+
+The Groq client is **not instantiated at module import time**. Instead it uses a lazy singleton pattern:
+
+```python
+_client = None
+
+def get_client() -> AsyncGroq:
+    global _client
+    if _client is None:
+        _client = AsyncGroq(api_key=os.environ.get("GROQ_API_KEY", "dummy_key"))
+    return _client
+
+async def generate(prompt: str) -> dict:
+    client = get_client()   # ← only instantiated on first real call
+    response = await client.chat.completions.create(
+        messages=[{"role": "user", "content": prompt}],
+        model="llama-3.3-70b-versatile",
+        response_format={"type": "json_object"},
+        temperature=0.3,
+    )
+    return json.loads(response.choices[0].message.content)
+```
+
+**Why lazy?** Prevents `GroqError: The api_key client option must be set` at pytest collection time when `GROQ_API_KEY` is not set in the CI environment.
+
+### Job Flow
+
+```
+  Browser hits POST /ai/atsScore
+          │
+          ▼
+  Node.js AiControllers.js
+    └── runAiJob({ name: "score-ats", data: { prompt } })
+          │
+          ▼
+  BullMQ Queue ("ai-tasks") ──► Redis
+          │
+          ▼ (consumed by Python worker)
+  process(job, token)
+    └── generate(prompt)
+          │
+          ▼
+  Groq API  llama-3.3-70b-versatile
+          │
+          ▼
+  Parsed JSON result stored in BullMQ job return value
+          │
+          ▼
+  Node.js waits on job.waitUntilFinished() → responds to browser
+```
 
 ---
 
@@ -669,10 +837,16 @@ Client ──► Load ────────┤                ├────
 | `y-protocols` | Backend | Binary sync + awareness encoding |
 | `lib0` | Backend | Binary encoder/decoder utilities |
 | `ws` | Backend | Native WebSocket server |
-| `bullmq` | Backend | Job queue for persistence |
-| `ioredis` | Backend | Redis client (required by BullMQ) |
+| `bullmq` | Backend (Node.js) | Job queue for persistence & AI task dispatch |
+| `ioredis` | Backend (Node.js) | Redis client (required by BullMQ) |
 | `y-websocket` | Frontend | Yjs WebSocket provider |
 | `y-indexeddb` | Frontend | Yjs IndexedDB offline persistence |
+| `fastapi` | AI Service | Python HTTP framework |
+| `uvicorn` | AI Service | ASGI server for FastAPI |
+| `bullmq` (Python) | AI Service | BullMQ Python consumer |
+| `groq` | AI Service | Groq Python SDK |
+| `python-dotenv` | AI Service | `.env` loading |
+| `pytest`, `pytest-asyncio`, `httpx` | AI Service | Isolated test suite |
 
 ---
 
