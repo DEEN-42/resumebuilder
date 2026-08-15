@@ -1,0 +1,188 @@
+##############################################################################
+# CI/CD Pipeline — Resume Builder Monorepo
+#
+# JOBS OVERVIEW
+# ─────────────────────────────────────────────────────────────────────────────
+#   test-frontend  ──┐
+#                    ├── (both must pass) ──▶  deploy-backend  ──▶  deploy-frontend
+#   test-backend   ──┘
+#
+# TRIGGERS
+#   • test-frontend + test-backend → every push and every pull_request
+#   • deploy-backend + deploy-frontend → push to main branch ONLY
+#
+# REQUIRED GITHUB SECRETS (Settings → Secrets and variables → Actions)
+#   RENDER_DEPLOY_HOOK_URL  — Deploy Hook URL from Render service settings
+#   VERCEL_TOKEN            — Personal Access Token from vercel.com/account/tokens
+#   VERCEL_ORG_ID           — Team/personal scope ID (vercel teams ls or vercel.json)
+#   VERCEL_PROJECT_ID       — Project ID from Vercel project settings
+##############################################################################
+
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - '**'          # Run tests on every branch push
+  pull_request:
+    branches:
+      - '**'          # Run tests on every PR
+
+# Cancel in-progress runs on the same branch when a newer push arrives
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ────────────────────────────────────────────────────────────────────────────
+  # JOB 1: Frontend Tests (Vitest)
+  # ────────────────────────────────────────────────────────────────────────────
+  test-frontend:
+    name: 🧪 Frontend Tests (Vitest)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - name: ⬇️ Checkout repository
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      # vitest run exits cleanly after tests — no --watch mode in CI
+      - name: ✅ Run Vitest tests
+        run: npm test
+
+  # ────────────────────────────────────────────────────────────────────────────
+  # JOB 2: Backend Tests (Jest + supertest)
+  # ────────────────────────────────────────────────────────────────────────────
+  test-backend:
+    name: 🧪 Backend Tests (Jest)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+
+    steps:
+      - name: ⬇️ Checkout repository
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
+
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      # --forceExit ensures Jest doesn't hang due to open async handles
+      # (e.g., timers kept alive by mocked modules)
+      - name: ✅ Run Jest tests
+        run: npm test
+        env:
+          # Provide a dummy JWT secret so middleware tests don't fail
+          # on missing env vars. Real secrets are NEVER used in tests.
+          JWT_SECRET: ci-test-secret-do-not-use-in-production
+          NODE_ENV: test
+
+  # ────────────────────────────────────────────────────────────────────────────
+  # JOB 3: Deploy Backend to Render
+  # Condition: ONLY on push to main (never on PRs or other branches)
+  # Depends on: test-frontend AND test-backend both passing
+  # ────────────────────────────────────────────────────────────────────────────
+  deploy-backend:
+    name: 🚀 Deploy Backend → Render
+    runs-on: ubuntu-latest
+    needs: [test-frontend, test-backend]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+      - name: 🔔 Trigger Render Deploy Hook
+        # Render's deploy hook is a simple HTTPS GET/POST that queues a new deploy.
+        # The hook URL contains an embedded secret — keep it in GitHub Secrets.
+        run: |
+          RESPONSE=$(curl --silent --show-error --fail \
+            --max-time 30 \
+            "${{ secrets.RENDER_DEPLOY_HOOK_URL }}")
+          echo "Render API response: $RESPONSE"
+
+      - name: ℹ️ Deploy triggered
+        run: |
+          echo "Backend deploy triggered on Render."
+          echo "Monitor deploy status at: https://dashboard.render.com"
+
+  # ────────────────────────────────────────────────────────────────────────────
+  # JOB 4: Deploy Frontend to Vercel
+  # Condition: ONLY on push to main (never on PRs or other branches)
+  # Depends on: deploy-backend completing successfully
+  # ────────────────────────────────────────────────────────────────────────────
+  deploy-frontend:
+    name: 🚀 Deploy Frontend → Vercel
+    runs-on: ubuntu-latest
+    needs: [deploy-backend]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - name: ⬇️ Checkout repository
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      - name: 🌐 Install Vercel CLI
+        run: npm install --global vercel@latest
+
+      # Pull Vercel project settings + environment variables into .vercel/
+      # --yes skips interactive prompts; --environment=production targets prod env vars
+      - name: 📥 Pull Vercel project settings
+        run: |
+          vercel pull \
+            --yes \
+            --environment=production \
+            --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+      # Build the production bundle using pulled settings + env vars
+      - name: 🏗️ Build for production
+        run: |
+          vercel build \
+            --prod \
+            --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+      # Deploy the pre-built output to Vercel's production deployment
+      - name: 📤 Deploy to Vercel (production)
+        run: |
+          vercel deploy \
+            --prebuilt \
+            --prod \
+            --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
