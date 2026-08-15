@@ -1,10 +1,8 @@
 import dotenv from 'dotenv';
-import { GoogleGenAI } from '@google/genai';
 import Resume from '../models/resumeDatamodel.js';
+import { runAiJob } from '../queues/aiQueue.js';
 
 dotenv.config();
-const { GOOGLE_API_KEY } = process.env;
-const ai = new GoogleGenAI({ apiKey: GOOGLE_API_KEY });
 
 export const scoreATS = async (req, res) => {
     try {
@@ -49,23 +47,8 @@ export const scoreATS = async (req, res) => {
             ${JSON.stringify(resume, null, 2)}
             `;
 
-        const geminiResp = await ai.models.generateContent({
-            model: 'gemini-2.0-flash',
-            contents: prompt,
-        });
-
-        let raw = geminiResp.text.trim();
-        if (raw.startsWith('```')) {
-            raw = raw.replace(/^```(?:json)?\s*|```$/g, '').trim();
-        }
-
-        let analysis;
-        try {
-            analysis = JSON.parse(raw);
-        } catch (e) {
-            console.error('Gemini JSON parse error:', e, '\nRaw output:\n', raw);
-            return res.status(500).json({ error: 'Gemini returned invalid JSON' });
-        }
+        const dedupId = `score-ats:${userEmail}:${resume.id}`;
+        const analysis = await runAiJob('score-ats', { prompt }, dedupId);
 
         return res.status(200).json({
             score: analysis.score ?? 0,
@@ -104,23 +87,13 @@ const validateUserAccess = async (req, res) => {
     return { success: true, resume };
 };
 
-const generateAIContent = async (prompt) => {
-    let raw = ''; // Declare raw outside try block
+const generateAIContent = async (prompt, dedupId) => {
     try {
-        const geminiResp = await ai.models.generateContent({
-            model: 'gemini-2.0-flash',
-            contents: prompt,
-        });
-
-        raw = geminiResp.text.trim();
-        if (raw.startsWith('```')) {
-            raw = raw.replace(/^```(?:json)?\s*|```$/g, '').trim();
-        }
-
-        return JSON.parse(raw);
+        const analysis = await runAiJob('generate-content', { prompt }, dedupId);
+        return analysis;
     } catch (e) {
-        console.error('Gemini JSON parse error:', e, '\nRaw output:\n', raw);
-        throw new Error('AI returned invalid JSON');
+        console.error('AI Job error:', e);
+        throw new Error('AI returned invalid response');
     }
 };
 
@@ -157,7 +130,8 @@ export const internships = async (req, res) => {
             - Ensure company names and locations are realistic
         `;
 
-        const analysis = await generateAIContent(aiPrompt);
+        const dedupId = `generate-content:${req.email}:${validation.resume.id}:internships`;
+        const analysis = await generateAIContent(aiPrompt, dedupId);
         
         return res.status(200).json({
             success: true,
@@ -203,7 +177,8 @@ export const projects = async (req, res) => {
             - Use technical keywords relevant to the project domain
         `;
 
-        const analysis = await generateAIContent(aiPrompt);
+        const dedupId = `generate-content:${req.email}:${validation.resume.id}:projects`;
+        const analysis = await generateAIContent(aiPrompt, dedupId);
         
         return res.status(200).json({
             success: true,
@@ -249,7 +224,8 @@ export const skills = async (req, res) => {
             - Remove outdated skills and add modern alternatives if requested
         `;
 
-        const analysis = await generateAIContent(aiPrompt);
+        const dedupId = `generate-content:${req.email}:${validation.resume.id}:skills`;
+        const analysis = await generateAIContent(aiPrompt, dedupId);
         
         return res.status(200).json({
             success: true,
@@ -294,7 +270,8 @@ export const awards = async (req, res) => {
             - Ensure the award is credible and relevant to the user's field
         `;
 
-        const analysis = await generateAIContent(aiPrompt);
+        const dedupId = `generate-content:${req.email}:${validation.resume.id}:awards`;
+        const analysis = await generateAIContent(aiPrompt, dedupId);
         
         return res.status(200).json({
             success: true,
@@ -339,7 +316,8 @@ export const extraAcademicActivities = async (req, res) => {
             - Make the activity relevant to academic and professional growth
         `;
 
-        const analysis = await generateAIContent(aiPrompt);
+        const dedupId = `generate-content:${req.email}:${validation.resume.id}:extraAcademicActivities`;
+        const analysis = await generateAIContent(aiPrompt, dedupId);
         
         return res.status(200).json({
             success: true,
@@ -385,7 +363,8 @@ export const coursework = async (req, res) => {
             - Prioritize high-impact and industry-relevant coursework
         `;
 
-        const analysis = await generateAIContent(aiPrompt);
+        const dedupId = `generate-content:${req.email}:${validation.resume.id}:coursework`;
+        const analysis = await generateAIContent(aiPrompt, dedupId);
         
         return res.status(200).json({
             success: true,
@@ -431,7 +410,8 @@ export const position = async (req, res) => {
             - Make the position title professional and impactful
         `;
 
-        const analysis = await generateAIContent(aiPrompt);
+        const dedupId = `generate-content:${req.email}:${validation.resume.id}:position`;
+        const analysis = await generateAIContent(aiPrompt, dedupId);
         
         return res.status(200).json({
             success: true,
@@ -449,35 +429,14 @@ export const position = async (req, res) => {
 //     try {
 //         const validation = await validateUserAccess(req, res);
 //         if (validation.error) return validation.response;
-        
+//         
 //         const { sectionData, prompt: userPrompt } = req.body;
-
-//         const aiPrompt = `
-//             You are an expert resume consultant. Update the following extracurricular activity data based on the user's request.
-//             Return ONLY a minified JSON object with the EXACT same structure as the input, but with improved content.
-            
-//             CRITICAL: Return the updated activity object directly, not wrapped in a "data" array.
-            
-//             Expected output format (matching input structure exactly):
-//             {"title":"<updated_activity_title>","description":"<updated_activity_description>"}
-
-//             User Request: ${userPrompt}
-
-//             Current Extracurricular Activity Data:
-//             ${JSON.stringify(sectionData)}
-
-//             Guidelines:
-//             - Keep the same JSON structure as input
-//             - Update the activity title and description based on user request
-//             - Description should be 2-3 lines highlighting key contributions and impact separated by \\n
-//             - Include specific achievements, roles, or recognition received
-//             - Focus on soft skills development, teamwork, and personal growth
-//             - Use action verbs and quantifiable results where possible
-//             - Make the activity showcase well-roundedness and character
-//         `;
-
-//         const analysis = await generateAIContent(aiPrompt);
-        
+//
+//         const aiPrompt = \`...\`;
+//
+//         const dedupId = \`generate-content:\${req.email}:\${validation.resume.id}:extracurricular\`;
+//         const analysis = await generateAIContent(aiPrompt, dedupId);
+//         
 //         return res.status(200).json({
 //             success: true,
 //             data: analysis,
@@ -488,42 +447,20 @@ export const position = async (req, res) => {
 //         res.status(500).json({ success: false, error: 'Failed to generate extracurricular suggestions', message: 'Failed to generate suggestions' });
 //     }
 // };
-
+//
 // // 9. Competitions (Updated to modify existing data)
 // export const competitions = async (req, res) => {
 //     try {
 //         const validation = await validateUserAccess(req, res);
 //         if (validation.error) return validation.response;
-        
+//         
 //         const { sectionData, prompt: userPrompt } = req.body;
-
-//         const aiPrompt = `
-//             You are an expert resume consultant. Update the following competition data based on the user's request.
-//             Return ONLY a minified JSON object with the EXACT same structure as the input, but with improved content.
-            
-//             CRITICAL: Return the updated competition object directly, not wrapped in a "data" array.
-            
-//             Expected output format (matching input structure exactly):
-//             {"title":"<updated_competition_title>","date":"<updated_date>","points":["<updated_achievement1>","<updated_achievement2>","<updated_achievement3>"]}
-
-//             User Request: ${userPrompt}
-
-//             Current Competition Data:
-//             ${JSON.stringify(sectionData)}
-
-//             Guidelines:
-//             - Keep the same JSON structure as input
-//             - Update the competition title, date, and points based on user request
-//             - Date should be in format "Month Year"
-//             - Points should be 2-4 specific achievements in array format
-//             - Include rankings, team size, or selection criteria
-//             - Use quantifiable metrics and specific technical details
-//             - Make achievements impressive and credible
-//             - Focus on skills demonstrated and recognition received
-//         `;
-
-//         const analysis = await generateAIContent(aiPrompt);
-        
+//
+//         const aiPrompt = \`...\`;
+//
+//         const dedupId = \`generate-content:\${req.email}:\${validation.resume.id}:competitions\`;
+//         const analysis = await generateAIContent(aiPrompt, dedupId);
+//         
 //         return res.status(200).json({
 //             success: true,
 //             data: analysis,

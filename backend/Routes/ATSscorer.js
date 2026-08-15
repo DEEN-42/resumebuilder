@@ -1,12 +1,11 @@
 import express from 'express';
-import { GoogleGenAI } from '@google/genai';
 import dotenv from 'dotenv';
 import Resume from '../models/resumeDatamodel.js';
 import authMiddleware from '../middleware/AuthenticationMIddleware.js';
+import { runAiJob } from '../queues/aiQueue.js';
 
 dotenv.config();
-const { GOOGLE_API_KEY } = process.env;
-const ai = new GoogleGenAI({ apiKey: GOOGLE_API_KEY });
+
 const router = express.Router();
 
 router.post('/', authMiddleware, express.json(), async (req, res) => {
@@ -49,23 +48,8 @@ try {
     ${JSON.stringify(resume, null, 2)}
     `;
 
-    const geminiResp = await ai.models.generateContent({
-    model: 'gemini-2.0-flash',
-    contents: prompt,
-    });
-
-    let raw = geminiResp.text.trim();
-    if (raw.startsWith('```')) {
-    raw = raw.replace(/^```(?:json)?\s*|```$/g, '').trim();
-    }
-
-    let analysis;
-    try {
-    analysis = JSON.parse(raw);
-    } catch (e) {
-    console.error('Gemini JSON parse error:', e, '\nRaw output:\n', raw);
-    return res.status(500).json({ error: 'Gemini returned invalid JSON' });
-    }
+    const dedupId = `score-ats:${userEmail}:${resume.id}`;
+    const analysis = await runAiJob('score-ats', { prompt }, dedupId);
 
     return res.status(200).json({
     score: analysis.score ?? 0,
@@ -73,10 +57,11 @@ try {
     areasToImprove: analysis.areasToImprove ?? [],
     aiSuggestions: analysis.aiSuggestions ?? [],
 });
-} catch (err) {
-console.error('ATS scoring error:', err);
-res.status(500).json({ error: 'Failed to generate ATS score' });
-}
+    } catch (err) {
+        console.error('ATS scoring error (full details):', err);
+        if (err.stack) console.error(err.stack);
+        res.status(500).json({ error: 'Failed to generate ATS score', details: err.message });
+    }
 });
 
 export default router;
