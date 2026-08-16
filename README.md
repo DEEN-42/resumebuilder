@@ -6,6 +6,7 @@ Multiple users can edit the same resume at the same time — edits merge automat
 
 ---
 
+
 ## Features
 
 | Feature | Description |
